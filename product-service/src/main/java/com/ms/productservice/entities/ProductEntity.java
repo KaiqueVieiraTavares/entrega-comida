@@ -20,12 +20,12 @@ public class ProductEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+    @Column(unique = true)
     private String name;
     private String description;
     private BigDecimal price;
     private Boolean available;
     private String imageUrl;
-
     @Enumerated(EnumType.STRING)
     private Category category;
 

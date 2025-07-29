@@ -1,6 +1,7 @@
 package com.ms.clientservice.auth;
 
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,11 +18,11 @@ public class AuthController {
         this.authService = authService;
     }
     @PostMapping("/register")
-    public ResponseEntity<ResponseAuthDto> registerUser(@RequestBody RegisterDto registerDto){
+    public ResponseEntity<ResponseAuthDto> registerUser(@RequestBody @Valid RegisterDto registerDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.registerUser(registerDto));
     }
     @PostMapping("/login")
-    public ResponseEntity<ResponseAuthDto> loginUser(@RequestBody LoginDto loginDto){
+    public ResponseEntity<ResponseAuthDto> loginUser(@RequestBody @Valid LoginDto loginDto){
         return ResponseEntity.ok(authService.loginUser(loginDto));
     }
 }

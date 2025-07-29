@@ -5,6 +5,7 @@ import com.ms.clientservice.auth.AuthUtil;
 import com.ms.clientservice.dtos.ResponseDto;
 import com.ms.clientservice.dtos.UpdateDto;
 import com.ms.clientservice.services.ClientService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +22,7 @@ public class ClientController {
     }
 
     @PutMapping("/me")
-    public ResponseEntity<ResponseDto> updateClient(@RequestBody UpdateDto updateDto){
+    public ResponseEntity<ResponseDto> updateClient(@RequestBody @Valid UpdateDto updateDto){
         UUID id = AuthUtil.getLoggedUserId();
         return ResponseEntity.ok(clientService.updateClient(updateDto, id));
     }
