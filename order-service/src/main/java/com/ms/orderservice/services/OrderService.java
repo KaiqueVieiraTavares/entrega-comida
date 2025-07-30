@@ -4,6 +4,7 @@ import com.ms.orderservice.configuration.ModelMapperConfiguration;
 import com.ms.orderservice.dtos.*;
 import com.ms.orderservice.entities.OrderEntity;
 import com.ms.orderservice.entities.OrderItemEntity;
+import com.ms.orderservice.enums.OrderStatus;
 import com.ms.orderservice.exceptions.OrderNotFoundException;
 import com.ms.orderservice.exceptions.UnauthorizedAccessException;
 import com.ms.orderservice.messaging.producer.OrderMessagingProducer;
@@ -63,49 +64,38 @@ public class OrderService {
         }
         orderRepository.delete(order);
     }
+
+
     public OrderResponseDto updateOrder(UUID clientId, UUID orderId, OrderRequestDto orderRequestDto){
         var order = orderRepository.findById(orderId).orElseThrow(()-> new OrderNotFoundException("Order not found"));
         if(!(order.getClientId().equals(clientId))){
             throw new UnauthorizedAccessException("You do not have access to this content");
         }
-        var oldItems = order.getItems();
-        var newItems = orderRequestDto.items();
-
-        var oldQuantities = mapItemsToQuantityEntity(oldItems);
-        var newQuantities = mapItemsToQuantityDto(newItems);
-
-        Set<UUID> allProductsIds = new HashSet<>();
-        allProductsIds.addAll(oldQuantities.keySet());
-        allProductsIds.addAll(newQuantities.keySet());
-
-        for(UUID productId : allProductsIds){
-            int oldQty = oldQuantities.getOrDefault(productId, 0);
-            int newQty = newQuantities.getOrDefault(productId, 0);
-            int diff = newQty - oldQty;
-
-
-            if(diff > 0 ){
-
-            }
+        if(orderRequestDto.items() == null || orderRequestDto.items().isEmpty()) {
+            throw new IllegalArgumentException("Order must contain at least one item.");
         }
-        modelMapper.map(orderRequestDto, order);
-        var savedOrder = orderRepository.save(order);
-        return modelMapper.map(savedOrder,OrderResponseDto.class);
+        order.getItems().clear();
+        orderRequestDto.items().forEach(itemDto -> {
+            OrderItemEntity item = new OrderItemEntity();
+            item.setProductId(itemDto.productId());
+            item.setName(itemDto.name());
+            item.setPrice(itemDto.price());
+            item.setQuantity(itemDto.quantity());
+            order.addItem(item);
+        });
+        return modelMapper.map(orderRepository.save(order), OrderResponseDto.class);
     }
 
-    private Map<UUID, Integer> mapItemsToQuantityEntity(List<OrderItemEntity> items){
-        return items.stream().collect(Collectors.toMap(
-                OrderItemEntity::getProductId,
-                OrderItemEntity::getQuantity,
-                Integer::sum
-        ));
-    }
-
-    private Map<UUID, Integer> mapItemsToQuantityDto(List<OrderItemRequestDto> items){
-        return items.stream().collect(Collectors.toMap(
-                OrderItemRequestDto::productId,
-                OrderItemRequestDto::quantity,
-                Integer::sum
-        ));
+    public OrderResponseDto confirmOrder(UUID clientId, UUID orderId){
+        var order=orderRepository.findById(orderId).orElseThrow(() -> new OrderNotFoundException("Order not found"));
+        if(!(order.getClientId().equals(clientId))){
+            throw new UnauthorizedAccessException("You do not have access to this content");
+        }
+        orderMessagingProducer.sendStockUpdate(order.getItems().stream().map(
+                itemEntity -> new StockItemDto(itemEntity.getProductId(),
+                        itemEntity.getQuantity())
+        ).toList());
+        order.setStatus(OrderStatus.PAID);
+        return modelMapper.map(orderRepository.save(order), OrderResponseDto.class);
     }
 }

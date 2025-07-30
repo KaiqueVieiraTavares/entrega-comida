@@ -24,11 +24,20 @@ public class OrderEntity {
     private LocalDateTime createdAt;
     private OrderStatus status;
     private BigDecimal totalPrice;
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval=true)
     private List<OrderItemEntity> items = new ArrayList<>();
 
     @PrePersist
     public void prePersist(){
         this.createdAt = LocalDateTime.now();
+    }
+
+    public void addItem(OrderItemEntity orderItemEntity){
+        items.add(orderItemEntity);
+        orderItemEntity.setOrder(this);
+    }
+    public void removeItem(OrderItemEntity orderItemEntity){
+        items.remove(orderItemEntity);
+        orderItemEntity.setOrder(null);
     }
 }
