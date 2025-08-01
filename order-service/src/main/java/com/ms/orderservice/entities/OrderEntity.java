@@ -21,6 +21,7 @@ public class OrderEntity {
     @Id
     private UUID id;
     private UUID clientId;
+    private UUID restaurantId;
     private LocalDateTime createdAt;
     private OrderStatus status;
     private BigDecimal totalPrice;

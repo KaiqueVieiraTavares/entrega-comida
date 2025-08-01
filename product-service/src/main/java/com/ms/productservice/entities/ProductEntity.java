@@ -20,6 +20,7 @@ public class ProductEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+    private UUID restaurantId;
     @Column(unique = true)
     private String name;
     private String description;
