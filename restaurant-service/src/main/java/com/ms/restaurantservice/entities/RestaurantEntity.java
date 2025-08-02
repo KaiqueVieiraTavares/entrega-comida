@@ -16,8 +16,16 @@ import java.util.UUID;
 public class RestaurantEntity {
     @Id
     private UUID id;
+    private UUID owner_id;
     private String name;
     private String email;
     private String password;
-    private String cpf;
+    private String cnpj;
+    private String phone;
+    private String address;
+    private String city;
+    private String state;
+    private String cep;
+    private String description;
+    private String category;
 }

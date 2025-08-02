@@ -24,4 +24,12 @@ public class HandleControllerAdvice {
         problem.setDetail(e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problem);
     }
+
+    @ExceptionHandler(UnauthorizedAccessException.class)
+    public ResponseEntity<ProblemDetail> handleUnauthorizedAccessException(UnauthorizedAccessException e){
+        var problem = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
+        problem.setTitle("not Authorized to this content");
+        problem.setDetail(e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(problem);
+    }
 }
