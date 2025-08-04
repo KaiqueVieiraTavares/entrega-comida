@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 
@@ -16,7 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Data
 @Table(name = "client")
-public class ClientEntity {
+public class UserEntity {
 
 
     @Id

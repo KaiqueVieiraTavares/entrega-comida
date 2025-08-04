@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ExceptionHandlerAdvice {
 
     private static final Logger logger = LoggerFactory.getLogger(ExceptionHandlerAdvice.class);
-    @ExceptionHandler(ClientNotFoundException.class)
-    public ResponseEntity<ProblemDetail> handleClientNotFoundException(ClientNotFoundException e ){
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ProblemDetail> handleClientNotFoundException(UserNotFoundException e ){
         logger.error("Client not found: {}", e.getMessage());
         var problem = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
         problem.setTitle("Client not found");
@@ -21,8 +21,8 @@ public class ExceptionHandlerAdvice {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problem);
     }
 
-    @ExceptionHandler(ClientNotAuthenticatedException.class)
-    public ResponseEntity<ProblemDetail> handleClientNotAuthenticatedException(ClientNotAuthenticatedException e){
+    @ExceptionHandler(UserNotAuthenticatedException.class)
+    public ResponseEntity<ProblemDetail> handleClientNotAuthenticatedException(UserNotAuthenticatedException e){
         logger.error("Client is not authenticated: {}", e.getMessage());
         var problem = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
         problem.setTitle("Client is not authenticated");

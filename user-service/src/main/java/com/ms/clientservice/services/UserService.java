@@ -5,11 +5,11 @@ package com.ms.clientservice.services;
 import com.ms.clientservice.dtos.RegisterDto;
 import com.ms.clientservice.dtos.ResponseDto;
 import com.ms.clientservice.dtos.UpdateDto;
-import com.ms.clientservice.entities.ClientEntity;
+import com.ms.clientservice.entities.UserEntity;
 import com.ms.clientservice.enums.Role;
-import com.ms.clientservice.exceptions.ClientNotFoundException;
+import com.ms.clientservice.exceptions.UserNotFoundException;
 import com.ms.clientservice.exceptions.EmailAlreadyExistsException;
-import com.ms.clientservice.repositories.ClientRepository;
+import com.ms.clientservice.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,13 +19,13 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class ClientService {
+public class UserService {
     private final ModelMapper modelMapper;
-    private final ClientRepository clientRepository;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    public ClientService(ModelMapper modelMapper, ClientRepository clientRepository, PasswordEncoder passwordEncoder) {
+    public UserService(ModelMapper modelMapper, UserRepository clientRepository, PasswordEncoder passwordEncoder) {
         this.modelMapper = modelMapper;
-        this.clientRepository = clientRepository;
+        this.userRepository = clientRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -33,43 +33,45 @@ public class ClientService {
 
     @Transactional
     public ResponseDto registerClient(RegisterDto dto) {
-        if (clientRepository.existsByEmail(dto.email())) {
+        if (userRepository.existsByEmail(dto.email())) {
             throw new EmailAlreadyExistsException("Email already exists");
         }
 
-        var client = new ClientEntity();
+        var client = new UserEntity();
         client.setName(dto.name());
         client.setEmail(dto.email());
         client.setPhone(dto.phone());
         client.setPassword(passwordEncoder.encode(dto.password()));
         client.setRole(Role.USER);
 
-        var savedUser = clientRepository.save(client);
+        var savedUser = userRepository.save(client);
         return modelMapper.map(savedUser, ResponseDto.class);
     }
 
 
-
+    public Boolean existsByEmail(String email){
+        return userRepository.existsByEmail(email);
+    }
     @Transactional
     public ResponseDto updateClient(UpdateDto updateDto, UUID id){
-        var client = clientRepository.findById(id).orElseThrow(() -> new ClientNotFoundException("Client not found"));
+        var client = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("Client not found"));
         modelMapper.map(updateDto, client);
-        var savedUser = clientRepository.save(client);
+        var savedUser = userRepository.save(client);
         return modelMapper.map(savedUser, ResponseDto.class);
     }
     @Transactional
     public void deleteClient(UUID id){
-        if(!clientRepository.existsById(id)) throw new ClientNotFoundException("Client not found");
-        clientRepository.deleteById(id);
+        if(!userRepository.existsById(id)) throw new UserNotFoundException("Client not found");
+        userRepository.deleteById(id);
     }
 
     public ResponseDto getClient(UUID id){
-        var client = clientRepository.findById(id).orElseThrow(() -> new ClientNotFoundException("Client not found"));
+        var client = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("Client not found"));
         return modelMapper.map(client, ResponseDto.class);
     }
 
     public List<ResponseDto> getAllClients(){
-        return clientRepository.findAll().stream().map(client -> modelMapper.map(client, ResponseDto.class))
+        return userRepository.findAll().stream().map(user -> modelMapper.map(user, ResponseDto.class))
                 .toList();
     }
 
