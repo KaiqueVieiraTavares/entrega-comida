@@ -2,12 +2,17 @@ package com.ms.clientservice.services;
 
 
 
+import com.ms.clientservice.dtos.RegisterDto;
 import com.ms.clientservice.dtos.ResponseDto;
 import com.ms.clientservice.dtos.UpdateDto;
+import com.ms.clientservice.entities.ClientEntity;
+import com.ms.clientservice.enums.Role;
 import com.ms.clientservice.exceptions.ClientNotFoundException;
+import com.ms.clientservice.exceptions.EmailAlreadyExistsException;
 import com.ms.clientservice.repositories.ClientRepository;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,11 +22,33 @@ import java.util.UUID;
 public class ClientService {
     private final ModelMapper modelMapper;
     private final ClientRepository clientRepository;
-
-    public ClientService(ModelMapper modelMapper, ClientRepository clientRepository) {
+    private final PasswordEncoder passwordEncoder;
+    public ClientService(ModelMapper modelMapper, ClientRepository clientRepository, PasswordEncoder passwordEncoder) {
         this.modelMapper = modelMapper;
         this.clientRepository = clientRepository;
+        this.passwordEncoder = passwordEncoder;
     }
+
+
+
+    @Transactional
+    public ResponseDto registerClient(RegisterDto dto) {
+        if (clientRepository.existsByEmail(dto.email())) {
+            throw new EmailAlreadyExistsException("Email already exists");
+        }
+
+        var client = new ClientEntity();
+        client.setName(dto.name());
+        client.setEmail(dto.email());
+        client.setPhone(dto.phone());
+        client.setPassword(passwordEncoder.encode(dto.password()));
+        client.setRole(Role.USER);
+
+        var savedUser = clientRepository.save(client);
+        return modelMapper.map(savedUser, ResponseDto.class);
+    }
+
+
 
     @Transactional
     public ResponseDto updateClient(UpdateDto updateDto, UUID id){

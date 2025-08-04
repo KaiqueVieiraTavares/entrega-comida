@@ -1,11 +1,12 @@
 package com.ms.clientservice.controllers;
 
 
-import com.ms.clientservice.auth.AuthUtil;
+import com.ms.clientservice.dtos.RegisterDto;
 import com.ms.clientservice.dtos.ResponseDto;
 import com.ms.clientservice.dtos.UpdateDto;
 import com.ms.clientservice.services.ClientService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +20,14 @@ public class ClientController {
 
     public ClientController(ClientService clientService) {
         this.clientService = clientService;
+    }
+
+
+
+    @PostMapping("/register")
+    public ResponseEntity<ResponseDto> register(@RequestBody RegisterDto dto) {
+        var response = clientService.registerClient(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/me")

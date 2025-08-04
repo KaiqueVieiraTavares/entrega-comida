@@ -8,5 +8,6 @@ import java.util.UUID;
 
 @Repository
 public interface RestaurantRepository extends JpaRepository<RestaurantEntity, UUID> {
+    Boolean existsByNameAndIdNot(String name, UUID restaurantId);
     Boolean existsByName(String name);
 }
