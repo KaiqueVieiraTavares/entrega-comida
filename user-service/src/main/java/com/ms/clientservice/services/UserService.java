@@ -5,6 +5,7 @@ package com.ms.clientservice.services;
 import com.ms.clientservice.dtos.RegisterDto;
 import com.ms.clientservice.dtos.ResponseDto;
 import com.ms.clientservice.dtos.UpdateDto;
+import com.ms.clientservice.dtos.UserResponseDto;
 import com.ms.clientservice.entities.UserEntity;
 import com.ms.clientservice.enums.Role;
 import com.ms.clientservice.exceptions.UserNotFoundException;
@@ -38,7 +39,7 @@ public class UserService {
         }
 
         var client = new UserEntity();
-        client.setName(dto.name());
+        client.setUsername(dto.name());
         client.setEmail(dto.email());
         client.setPhone(dto.phone());
         client.setPassword(passwordEncoder.encode(dto.password()));
@@ -75,4 +76,9 @@ public class UserService {
                 .toList();
     }
 
+    public UserResponseDto findByUsername(String username){
+         var user = userRepository.findByUsername(username)
+                 .orElseThrow(() -> new UserNotFoundException("User not found"));
+         return modelMapper.map(user, UserResponseDto.class);
+    }
 }

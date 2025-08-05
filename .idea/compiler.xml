@@ -7,9 +7,9 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="eureka" />
-        <module name="auth-service" />
+        <module name="authentication-service" />
       </profile>
-      <profile name="Annotation profile for restaurant-service" enabled="true">
+      <profile name="Annotation profile for client-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -19,9 +19,11 @@
         <module name="product-service" />
         <module name="restaurant-service" />
         <module name="order-service" />
+        <module name="client-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="auth-service" target="21" />
       <module name="demo" target="21" />
       <module name="gateway" target="21" />
       <module name="user-service" target="21" />
@@ -30,6 +32,8 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="auth-service" options="-parameters" />
+      <module name="authentication-service" options="-parameters" />
+      <module name="client-service" options="-parameters" />
       <module name="demo" options="-parameters" />
       <module name="eureka" options="-parameters" />
       <module name="gateway" options="-parameters" />

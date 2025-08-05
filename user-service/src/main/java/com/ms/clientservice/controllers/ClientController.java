@@ -4,6 +4,7 @@ package com.ms.clientservice.controllers;
 import com.ms.clientservice.dtos.RegisterDto;
 import com.ms.clientservice.dtos.ResponseDto;
 import com.ms.clientservice.dtos.UpdateDto;
+import com.ms.clientservice.dtos.UserResponseDto;
 import com.ms.clientservice.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -23,14 +24,18 @@ public class ClientController {
     }
 
 
-
-
+    @GetMapping("/{username}")
+    public ResponseEntity<UserResponseDto> findByUsername(@PathVariable String username){
+        var userResponse = userService.findByUsername(username);
+        return ResponseEntity.ok(userResponse);
+    }
 
     @GetMapping("/email-exists")
     public ResponseEntity<Boolean> existsByEmail(@RequestParam String email){
         var exists = userService.existsByEmail(email);
         return ResponseEntity.ok(exists);
     }
+
     @PostMapping("/register")
     public ResponseEntity<ResponseDto> register(@RequestBody RegisterDto dto) {
         var response = userService.registerClient(dto);
