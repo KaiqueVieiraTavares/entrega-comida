@@ -8,13 +8,14 @@
         <outputRelativeToContentRoot value="true" />
         <module name="eureka" />
         <module name="authentication-service" />
+        <module name="gateway" />
       </profile>
       <profile name="Annotation profile for client-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
-          <entry name="$PROJECT_DIR$/../.m2/repository/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
         </processorPath>
         <module name="product-service" />
         <module name="restaurant-service" />
@@ -25,7 +26,6 @@
     <bytecodeTargetLevel>
       <module name="auth-service" target="21" />
       <module name="demo" target="21" />
-      <module name="gateway" target="21" />
       <module name="user-service" target="21" />
     </bytecodeTargetLevel>
   </component>

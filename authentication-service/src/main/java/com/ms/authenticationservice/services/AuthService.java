@@ -5,7 +5,6 @@ import com.ms.authenticationservice.clients.UserServiceClient;
 import com.ms.authenticationservice.dtos.UserLoginDto;
 import com.ms.authenticationservice.dtos.UserRegisterDto;
 import com.ms.authenticationservice.dtos.UserResponseLoginDto;
-import com.ms.authenticationservice.dtos.UserResponseRegisterDto;
 import com.ms.authenticationservice.exceptions.EmailAlreadyExistsException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,16 +21,14 @@ public class AuthService {
         this.tokenService = tokenService;
     }
 
-    public void registerUser(UserRegisterDto userRegisterDto){
-        if(userServiceClient.existsByUsername(userRegisterDto.username())){
+    public void registerUserService(UserRegisterDto userRegisterDto){
+        if(userServiceClient.existsByEmail(userRegisterDto.email())){
             throw new EmailAlreadyExistsException("Email already exists");
         }
-        var user = new UserRegisterDto(userRegisterDto.username(), passwordEncoder.encode(userRegisterDto.password()),
-                userRegisterDto.email(), userRegisterDto.phone(), userRegisterDto.cpf());
-        userServiceClient.registerUser(user);
+        userServiceClient.registerUser(userRegisterDto);
     }
 
-    public UserResponseLoginDto loginUser(UserLoginDto userLoginDto){
+    public UserResponseLoginDto loginUserService(UserLoginDto userLoginDto){
         var user = userServiceClient.findByEmail(userLoginDto.email());
         if(!passwordEncoder.matches(userLoginDto.password(), user.password())){
             throw new BadCredentialsException("invalid password");

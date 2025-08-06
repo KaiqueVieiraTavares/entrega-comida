@@ -27,17 +27,14 @@ public class UserService {
     public UserService(ModelMapper modelMapper, UserRepository clientRepository, PasswordEncoder passwordEncoder) {
         this.modelMapper = modelMapper;
         this.userRepository = clientRepository;
+
         this.passwordEncoder = passwordEncoder;
     }
 
 
 
     @Transactional
-    public ResponseDto registerClient(RegisterDto dto) {
-        if (userRepository.existsByEmail(dto.email())) {
-            throw new EmailAlreadyExistsException("Email already exists");
-        }
-
+    public UserResponseDto registerUser(RegisterDto dto) {
         var client = new UserEntity();
         client.setUsername(dto.name());
         client.setEmail(dto.email());
@@ -46,7 +43,7 @@ public class UserService {
         client.setRole(Role.USER);
 
         var savedUser = userRepository.save(client);
-        return modelMapper.map(savedUser, ResponseDto.class);
+        return modelMapper.map(savedUser, UserResponseDto.class);
     }
 
 

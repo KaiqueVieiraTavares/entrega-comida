@@ -24,23 +24,8 @@ public class ClientController {
     }
 
 
-    @GetMapping("/{username}")
-    public ResponseEntity<UserResponseDto> findByUsername(@PathVariable String username){
-        var userResponse = userService.findByUsername(username);
-        return ResponseEntity.ok(userResponse);
-    }
 
-    @GetMapping("/email-exists")
-    public ResponseEntity<Boolean> existsByEmail(@RequestParam String email){
-        var exists = userService.existsByEmail(email);
-        return ResponseEntity.ok(exists);
-    }
 
-    @PostMapping("/register")
-    public ResponseEntity<ResponseDto> register(@RequestBody RegisterDto dto) {
-        var response = userService.registerClient(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
 
     @PutMapping("/me")
     public ResponseEntity<ResponseDto> updateClient(@RequestBody @Valid UpdateDto updateDto){
