@@ -20,7 +20,7 @@ import java.util.UUID;
 public class OrderEntity {
     @Id
     private UUID id;
-    private UUID clientId;
+    private UUID userId;
     private UUID restaurantId;
     private LocalDateTime createdAt;
     private OrderStatus status;

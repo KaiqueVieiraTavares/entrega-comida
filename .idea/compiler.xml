@@ -10,13 +10,14 @@
         <module name="authentication-service" />
         <module name="gateway" />
       </profile>
-      <profile name="Annotation profile for client-service" enabled="true">
+      <profile name="Annotation profile for delivery-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
           <entry name="$PROJECT_DIR$/../.m2/repository/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
         </processorPath>
+        <module name="delivery-service" />
         <module name="product-service" />
         <module name="restaurant-service" />
         <module name="order-service" />
@@ -34,6 +35,7 @@
       <module name="auth-service" options="-parameters" />
       <module name="authentication-service" options="-parameters" />
       <module name="client-service" options="-parameters" />
+      <module name="delivery-service" options="-parameters" />
       <module name="demo" options="-parameters" />
       <module name="eureka" options="-parameters" />
       <module name="gateway" options="-parameters" />

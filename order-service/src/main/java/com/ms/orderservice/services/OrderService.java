@@ -30,21 +30,21 @@ public class OrderService {
         this.defaultKafkaConsumerFactory = defaultKafkaConsumerFactory;
     }
 
-    public CreateOrderResponseDto createOrder(UUID clientId, OrderRequestDto orderRequestDto){
+    public CreateOrderResponseDto createOrder(UUID userId, OrderRequestDto orderRequestDto){
         UUID orderId = UUID.randomUUID();
         List<StockItemDto> items = orderRequestDto.items().stream().map(item ->
                 new StockItemDto(item.productId(), item.quantity()))
                 .toList();
-        StockValidationRequestDto validation = new StockValidationRequestDto(orderId, clientId, items);
+        StockValidationRequestDto validation = new StockValidationRequestDto(orderId, userId, items);
 
         orderMessagingProducer.sendStockValidationRequest(validation);
 
         return new CreateOrderResponseDto(orderId, "Request received, awaiting validation");
     }
 
-    public OrderResponseDto getOrder(UUID clientId, UUID orderId) {
+    public OrderResponseDto getOrder(UUID userId, UUID orderId) {
         var order =  orderRepository.findById(orderId).orElseThrow(() -> new OrderNotFoundException("Order not found"));
-        if(!(order.getClientId().equals(clientId))){
+        if(!(order.getUserId().equals(userId))){
             throw new UnauthorizedAccessException("You do not have access to this content");
         }
         return modelMapper.map(order, OrderResponseDto.class);
@@ -57,18 +57,18 @@ public class OrderService {
                 .toList();
     }
 
-    public void deleteOrder(UUID clientId, UUID orderId){
+    public void deleteOrder(UUID userId, UUID orderId){
         var order = orderRepository.findById(orderId).orElseThrow(()-> new OrderNotFoundException("Order not found"));
-        if(!(order.getClientId().equals(clientId))){
+        if(!(order.getUserId().equals(userId))){
             throw new UnauthorizedAccessException("You do not have access to this content");
         }
         orderRepository.delete(order);
     }
 
 
-    public OrderResponseDto updateOrder(UUID clientId, UUID orderId, OrderRequestDto orderRequestDto){
+    public OrderResponseDto updateOrder(UUID userId, UUID orderId, OrderRequestDto orderRequestDto){
         var order = orderRepository.findById(orderId).orElseThrow(()-> new OrderNotFoundException("Order not found"));
-        if(!(order.getClientId().equals(clientId))){
+        if(!(order.getUserId().equals(userId))){
             throw new UnauthorizedAccessException("You do not have access to this content");
         }
         if(orderRequestDto.items() == null || orderRequestDto.items().isEmpty()) {
@@ -86,9 +86,9 @@ public class OrderService {
         return modelMapper.map(orderRepository.save(order), OrderResponseDto.class);
     }
 
-    public OrderResponseDto confirmOrder(UUID clientId, UUID orderId){
+    public OrderResponseDto confirmOrder(UUID userId, UUID orderId){
         var order=orderRepository.findById(orderId).orElseThrow(() -> new OrderNotFoundException("Order not found"));
-        if(!(order.getClientId().equals(clientId))){
+        if(!(order.getUserId().equals(userId))){
             throw new UnauthorizedAccessException("You do not have access to this content");
         }
         orderMessagingProducer.sendStockUpdate(order.getItems().stream().map(
