@@ -1,8 +1,7 @@
 package com.ms.orderservice.services;
 
-import com.ms.orderservice.configuration.ModelMapperConfiguration;
 import com.ms.orderservice.dtos.*;
-import com.ms.orderservice.entities.OrderEntity;
+
 import com.ms.orderservice.entities.OrderItemEntity;
 import com.ms.orderservice.enums.OrderStatus;
 import com.ms.orderservice.exceptions.OrderNotFoundException;
@@ -10,24 +9,24 @@ import com.ms.orderservice.exceptions.UnauthorizedAccessException;
 import com.ms.orderservice.messaging.producer.OrderMessagingProducer;
 import com.ms.orderservice.repositories.OrderRepository;
 import org.modelmapper.ModelMapper;
-import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
+
 
 @Service
 public class OrderService {
     private final OrderMessagingProducer orderMessagingProducer;
     private final OrderRepository orderRepository;
     private final ModelMapper modelMapper;
-    private final DefaultKafkaConsumerFactory defaultKafkaConsumerFactory;
 
-    public OrderService(OrderMessagingProducer orderMessagingProducer, OrderRepository orderRepository, ModelMapper modelMapper, DefaultKafkaConsumerFactory defaultKafkaConsumerFactory) {
+
+    public OrderService(OrderMessagingProducer orderMessagingProducer, OrderRepository orderRepository, ModelMapper modelMapper) {
         this.orderMessagingProducer = orderMessagingProducer;
         this.orderRepository = orderRepository;
         this.modelMapper = modelMapper;
-        this.defaultKafkaConsumerFactory = defaultKafkaConsumerFactory;
+
     }
 
     public CreateOrderResponseDto createOrder(UUID userId, OrderRequestDto orderRequestDto){
