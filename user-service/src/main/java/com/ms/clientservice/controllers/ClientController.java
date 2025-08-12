@@ -28,20 +28,18 @@ public class ClientController {
 
 
     @PutMapping("/me")
-    public ResponseEntity<ResponseDto> updateClient(@RequestBody @Valid UpdateDto updateDto){
-        UUID id = AuthUtil.getLoggedUserId();
-        return ResponseEntity.ok(userService.updateClient(updateDto, id));
+    public ResponseEntity<ResponseDto> updateClient(@RequestHeader("X-User-Id") String userId, @RequestBody @Valid UpdateDto updateDto){
+
+        return ResponseEntity.ok(userService.updateClient(updateDto, UUID.fromString(userId)));
     }
     @DeleteMapping("/me")
-    public ResponseEntity<Void> deleteClient() {
-        UUID id = AuthUtil.getLoggedUserId();
-        userService.deleteClient(id);
+    public ResponseEntity<Void> deleteClient(@RequestHeader("X-User-Id") String userId) {
+        userService.deleteClient(UUID.fromString(userId));
         return ResponseEntity.noContent().build();
     }
     @GetMapping("/me")
-    public ResponseEntity<ResponseDto> getClient(){
-        UUID id = AuthUtil.getLoggedUserId();
-        return ResponseEntity.ok(userService.getClient(id));
+    public ResponseEntity<ResponseDto> getClient(@RequestHeader("X-User-Id") String userId){
+        return ResponseEntity.ok(userService.getClient(UUID.fromString(userId)));
     }
     @GetMapping
     public ResponseEntity<List<ResponseDto>> getAllClients(){

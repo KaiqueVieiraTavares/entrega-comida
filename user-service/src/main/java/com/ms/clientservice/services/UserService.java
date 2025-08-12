@@ -38,6 +38,7 @@ public class UserService {
         var client = new UserEntity();
         client.setUsername(dto.name());
         client.setEmail(dto.email());
+        client.setCpf(dto.cpf());
         client.setPhone(dto.phone());
         client.setPassword(passwordEncoder.encode(dto.password()));
         client.setRole(Role.USER);

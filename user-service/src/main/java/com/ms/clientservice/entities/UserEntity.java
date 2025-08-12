@@ -35,7 +35,6 @@ public class UserEntity {
         createdAt = Instant.now();
         updatedAt = Instant.now();
     }
-
     @PreUpdate
     protected void onUpdate() {
         updatedAt = Instant.now();

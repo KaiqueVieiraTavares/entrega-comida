@@ -5,9 +5,10 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.3</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <version>3.1.4</version>
+        <relativePath/>
     </parent>
+
     <groupId>com.ms</groupId>
     <artifactId>client-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
@@ -29,6 +30,7 @@
     <properties>
         <java.version>21</java.version>
         <spring-cloud.version>2025.0.0</spring-cloud.version>
+        <junit-platform.version>5.10.0</junit-platform.version>
     </properties>
     <dependencies>
         <dependency>
@@ -46,6 +48,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -60,6 +63,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <version>1.18.28</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -108,6 +112,8 @@
                             <artifactId>lombok</artifactId>
                         </path>
                     </annotationProcessorPaths>
+                    <source>21</source>
+                    <target>21</target>
                 </configuration>
             </plugin>
             <plugin>

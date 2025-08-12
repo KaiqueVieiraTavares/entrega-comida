@@ -11,17 +11,7 @@
         <module name="gateway" />
         <module name="shared-files" />
       </profile>
-      <profile name="Annotation profile for order-service" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$PROJECT_DIR$/../.m2/repository/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
-          <entry name="$PROJECT_DIR$/../.m2/repository/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
-        </processorPath>
-        <module name="order-service" />
-      </profile>
-      <profile name="Annotation profile for product-service" enabled="true">
+      <profile name="Annotation profile for restaurant-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -31,13 +21,22 @@
         <module name="delivery-service" />
         <module name="product-service" />
         <module name="restaurant-service" />
+        <module name="order-service" />
         <module name="client-service" />
+      </profile>
+      <profile name="Annotation profile for client-service" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$PROJECT_DIR$/../.m2/repository/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
+        </processorPath>
+        <module name="user-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="auth-service" target="21" />
       <module name="demo" target="21" />
-      <module name="user-service" target="21" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
