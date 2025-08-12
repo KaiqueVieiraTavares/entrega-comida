@@ -5,9 +5,10 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.4</version>
-        <relativePath/>
+        <version>3.5.4</version>
+        <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
 
     <groupId>com.ms</groupId>
     <artifactId>client-service</artifactId>
@@ -110,6 +111,7 @@
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
+                            <version>1.18.34</version>
                         </path>
                     </annotationProcessorPaths>
                     <source>21</source>
