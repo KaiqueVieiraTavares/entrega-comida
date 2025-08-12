@@ -1,4 +1,4 @@
-package com.ms.orderservice.enums;
+package com.ms.shared.enums;
 
 public enum OrderStatus {
     PENDING_PAYMENT,

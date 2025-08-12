@@ -1,7 +1,7 @@
 package com.ms.orderservice.entities;
 
 
-import com.ms.orderservice.enums.OrderStatus;
+import com.ms.shared.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

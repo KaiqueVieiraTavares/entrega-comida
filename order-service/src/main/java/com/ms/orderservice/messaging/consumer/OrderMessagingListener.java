@@ -1,11 +1,10 @@
 package com.ms.orderservice.messaging.consumer;
 
 
-import com.ms.orderservice.dtos.StockValidationRequestDto;
-import com.ms.orderservice.dtos.StockValidationResponseDto;
 import com.ms.orderservice.entities.OrderEntity;
-import com.ms.orderservice.enums.OrderStatus;
 import com.ms.orderservice.repositories.OrderRepository;
+import com.ms.shared.dtos.stock.StockValidationResponseDto;
+import com.ms.shared.enums.OrderStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;

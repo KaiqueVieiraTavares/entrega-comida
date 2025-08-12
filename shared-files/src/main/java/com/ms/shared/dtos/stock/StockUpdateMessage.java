@@ -1,8 +1,6 @@
-package com.ms.orderservice.dtos;
+package com.ms.shared.dtos.stock;
 
 import java.util.List;
-import java.util.UUID;
 
 public record StockUpdateMessage
         (List<StockItemDto> items) {}
-

@@ -25,11 +25,10 @@ public class ProductEntity {
     private String name;
     private String description;
     private BigDecimal price;
-    private Boolean available;
     private String imageUrl;
     @Enumerated(EnumType.STRING)
     private Category category;
-
+    private Integer quantity;
 
 
 }

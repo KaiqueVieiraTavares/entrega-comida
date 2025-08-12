@@ -1,4 +1,4 @@
-package com.ms.orderservice.dtos;
+package com.ms.shared.dtos.stock;
 
 import java.util.List;
 import java.util.UUID;
@@ -8,4 +8,3 @@ public record StockValidationRequestDto(
         UUID clientId,
         List<StockItemDto> items
 ) {}
-

@@ -3,11 +3,11 @@ package com.ms.orderservice.services;
 import com.ms.orderservice.dtos.*;
 
 import com.ms.orderservice.entities.OrderItemEntity;
-import com.ms.orderservice.enums.OrderStatus;
 import com.ms.orderservice.exceptions.OrderNotFoundException;
 import com.ms.orderservice.exceptions.UnauthorizedAccessException;
 import com.ms.orderservice.messaging.producer.OrderMessagingProducer;
 import com.ms.orderservice.repositories.OrderRepository;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 
 import org.springframework.stereotype.Service;
@@ -28,7 +28,7 @@ public class OrderService {
         this.modelMapper = modelMapper;
 
     }
-
+    @Transactional
     public CreateOrderResponseDto createOrder(UUID userId, OrderRequestDto orderRequestDto){
         UUID orderId = UUID.randomUUID();
         List<StockItemDto> items = orderRequestDto.items().stream().map(item ->
@@ -55,7 +55,7 @@ public class OrderService {
                 .map(order -> modelMapper.map(order, OrderResponseDto.class))
                 .toList();
     }
-
+    @Transactional
     public void deleteOrder(UUID userId, UUID orderId){
         var order = orderRepository.findById(orderId).orElseThrow(()-> new OrderNotFoundException("Order not found"));
         if(!(order.getUserId().equals(userId))){
@@ -64,7 +64,7 @@ public class OrderService {
         orderRepository.delete(order);
     }
 
-
+    @Transactional
     public OrderResponseDto updateOrder(UUID userId, UUID orderId, OrderRequestDto orderRequestDto){
         var order = orderRepository.findById(orderId).orElseThrow(()-> new OrderNotFoundException("Order not found"));
         if(!(order.getUserId().equals(userId))){
@@ -84,7 +84,7 @@ public class OrderService {
         });
         return modelMapper.map(orderRepository.save(order), OrderResponseDto.class);
     }
-
+    @Transactional
     public OrderResponseDto confirmOrder(UUID userId, UUID orderId){
         var order=orderRepository.findById(orderId).orElseThrow(() -> new OrderNotFoundException("Order not found"));
         if(!(order.getUserId().equals(userId))){

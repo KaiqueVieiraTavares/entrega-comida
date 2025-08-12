@@ -1,14 +1,13 @@
 package com.ms.orderservice.messaging.producer;
 
 
-import com.ms.orderservice.dtos.StockItemDto;
-import com.ms.orderservice.dtos.StockUpdateMessage;
-import com.ms.orderservice.dtos.StockValidationRequestDto;
+import com.ms.shared.dtos.stock.StockItemDto;
+import com.ms.shared.dtos.stock.StockUpdateMessage;
+import com.ms.shared.dtos.stock.StockValidationRequestDto;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.kafka.support.SendResult;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @Component
