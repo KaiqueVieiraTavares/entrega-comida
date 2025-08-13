@@ -51,6 +51,8 @@ public class UserService {
     public Boolean existsByEmail(String email){
         return userRepository.existsByEmail(email);
     }
+
+
     @Transactional
     public ResponseDto updateClient(UpdateDto updateDto, UUID id){
         var client = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("Client not found"));
