@@ -61,7 +61,7 @@ public class RestaurantService {
         if(!(restaurant.getOwnerId().equals(ownerId))){
             throw new UnauthorizedAccessException("You are not authorized to access this restaurant.");
         }
-        boolean isChangingName = !restaurant.getName().equals(restaurantUpdateDto.name());
+        boolean isChangingName = !(restaurant.getName().equals(restaurantUpdateDto.name()));
         boolean nameExists = restaurantRepository.existsByNameAndIdNot(restaurantUpdateDto.name(), restaurantId);
         if(isChangingName && nameExists){
             throw new RestaurantAlreadyExistsException("The name of the restaurant already exists");

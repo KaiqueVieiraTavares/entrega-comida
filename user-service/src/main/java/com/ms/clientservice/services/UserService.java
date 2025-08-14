@@ -66,12 +66,12 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public ResponseDto getClient(UUID id){
+    public ResponseDto getUser(UUID id){
         var client = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("Client not found"));
         return modelMapper.map(client, ResponseDto.class);
     }
 
-    public List<ResponseDto> getAllClients(){
+    public List<ResponseDto> getAllUsers(){
         return userRepository.findAll().stream().map(user -> modelMapper.map(user, ResponseDto.class))
                 .toList();
     }

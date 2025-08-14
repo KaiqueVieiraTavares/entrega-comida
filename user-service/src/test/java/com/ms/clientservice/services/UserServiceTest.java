@@ -6,6 +6,7 @@ import com.ms.clientservice.dtos.UpdateDto;
 import com.ms.clientservice.dtos.UserResponseDto;
 import com.ms.clientservice.entities.UserEntity;
 import com.ms.clientservice.enums.Role;
+import com.ms.clientservice.exceptions.UserNotFoundException;
 import com.ms.clientservice.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,8 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -49,9 +49,9 @@ class UserServiceTest {
 
     private RegisterDto expectedRegisterDto;
     private UserEntity expectedUserEntity;
-    private UserResponseDto expectedResponseDto;
-    private UpdateDto expectedUpdatedto;
-    private ResponseDto expectedResponse;
+    private UserResponseDto expectedUserResponseDto;
+    private UpdateDto expectedUpdatedtoDto;
+    private ResponseDto expectedResponseDto;
     @BeforeEach
     public void setup() {
         expectedRegisterDto = new RegisterDto(username, email,cpf, password, phone);
@@ -66,22 +66,22 @@ class UserServiceTest {
                 Instant.now(),
                 Instant.now()
         );
-        expectedResponse = new ResponseDto(username,email,phone);
-        expectedUpdatedto = new UpdateDto(username,email);
-        expectedResponseDto = new UserResponseDto(UUID.randomUUID(), username,password,List.of("USER"));
+        expectedResponseDto = new ResponseDto(username,email,phone);
+        expectedUpdatedtoDto = new UpdateDto(username,email);
+        expectedUserResponseDto = new UserResponseDto(UUID.randomUUID(), username,password,List.of("USER"));
     }
     @Test
     void registerUser_ShouldReturnUserResponse() {
         // Arrange
         when(passwordEncoder.encode(anyString())).thenReturn("encoded123");
         when(userRepository.save(any(UserEntity.class))).thenReturn(expectedUserEntity);
-        when(modelMapper.map(expectedUserEntity, UserResponseDto.class)).thenReturn(expectedResponseDto);
+        when(modelMapper.map(expectedUserEntity, UserResponseDto.class)).thenReturn(expectedUserResponseDto);
 
         // Act
         UserResponseDto result = userService.registerUser(expectedRegisterDto);
 
         // Assert
-        assertEquals(expectedResponseDto, result);
+        assertEquals(expectedUserResponseDto, result);
         verify(passwordEncoder).encode(expectedRegisterDto.password());
         verify(userRepository).save(any(UserEntity.class));
     }
@@ -97,16 +97,101 @@ class UserServiceTest {
                destination.setUsername(source.name());
        destination.setEmail(source.email());
        return null;
-       }).when(modelMapper).map(expectedUpdatedto, expectedUserEntity);
+       }).when(modelMapper).map(expectedUpdatedtoDto, expectedUserEntity);
        when(userRepository.save(any(UserEntity.class))).thenReturn(expectedUserEntity);
-       when(modelMapper.map(expectedUserEntity, ResponseDto.class)).thenReturn(expectedResponse);
+       when(modelMapper.map(expectedUserEntity, ResponseDto.class)).thenReturn(expectedResponseDto);
 
-       var result = userService.updateClient(expectedUpdatedto,UUID.randomUUID());
+       var result = userService.updateClient(expectedUpdatedtoDto,UUID.randomUUID());
 
-        assertEquals(expectedResponse, result);
+        assertEquals(expectedResponseDto, result);
         verify(userRepository,times(1)).findById(any(UUID.class));
         verify(userRepository, times(1)).save(any(UserEntity.class));
     }
+
+    @Test
+    void updateUser_ShouldThrowAnUserNotFoundException(){
+        when(userRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+
+        var exception =  assertThrows(UserNotFoundException.class, () ->
+                userService.updateClient(expectedUpdatedtoDto, UUID.randomUUID()));
+
+
+        verify(userRepository, never()).save(any(UserEntity.class));
+    }
+    @Test
+    void deleteUser(){
+        when(userRepository.findById(any(UUID.class))).thenReturn(Optional.of(expectedUserEntity));
+
+        userService.deleteClient(UUID.randomUUID());
+
+        verify(userRepository,times(1)).deleteById(any(UUID.class));
+    }
+
+    @Test
+    void deleteUser_ShouldThrowWhenNotFound() {
+        when(userRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class,
+                () -> userService.deleteClient(UUID.randomUUID())
+        );
+
+        verify(userRepository, never()).deleteById(any(UUID.class));
+    }
+
+    @Test
+    void getUser_ShouldReturnResponse(){
+        when(userRepository.findById(any(UUID.class))).thenReturn(Optional.of(expectedUserEntity));
+        when(modelMapper.map(expectedUserEntity, ResponseDto.class)).thenReturn(expectedResponseDto);
+
+        var result = userService.getUser(UUID.randomUUID());
+
+        assertEquals(expectedResponseDto, result);
+        verify(userRepository,times(1)).findById(any(UUID.class));
+        verify(modelMapper,times(1)).map(expectedUserEntity, ResponseDto.class);
+    }
+
+    @Test
+    void getUser_ShouldThrowWhenNotFound() {
+        when(userRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class,
+                () -> userService.getUser(UUID.randomUUID())
+        );
+
+        verify(modelMapper, never()).map(any(), any());
+    }
+
+    @Test
+    void getAllUsers_ShouldReturnListOfUsers() {
+
+        List<UserEntity> entities = List.of(expectedUserEntity);
+        when(userRepository.findAll()).thenReturn(entities);
+        when(modelMapper.map(expectedUserEntity, ResponseDto.class)).thenReturn(expectedResponseDto);
+
+
+        List<ResponseDto> result = userService.getAllUsers();
+
+        // Assert
+        assertEquals(1, result.size());
+        assertEquals(expectedResponseDto, result.getFirst());
+        verify(userRepository, times(1)).findAll();
+        verify(modelMapper, times(1)).map(expectedUserEntity, ResponseDto.class);
+    }
+
+    @Test
+    void getAllUsers_ShouldReturnEmptyList_WhenNoUsersFound() {
+        // Arrange
+        when(userRepository.findAll()).thenReturn(List.of());
+
+        // Act
+        List<ResponseDto> result = userService.getAllUsers();
+
+        // Assert
+        assertTrue(result.isEmpty());
+        verify(userRepository, times(1)).findAll();
+        verify(modelMapper, never()).map(any(), any());
+    }
 }
+
 
 

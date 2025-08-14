@@ -39,10 +39,10 @@ public class ClientController {
     }
     @GetMapping("/me")
     public ResponseEntity<ResponseDto> getClient(@RequestHeader("X-User-Id") String userId){
-        return ResponseEntity.ok(userService.getClient(UUID.fromString(userId)));
+        return ResponseEntity.ok(userService.getUser(UUID.fromString(userId)));
     }
     @GetMapping
     public ResponseEntity<List<ResponseDto>> getAllClients(){
-        return ResponseEntity.ok(userService.getAllClients());
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 }
