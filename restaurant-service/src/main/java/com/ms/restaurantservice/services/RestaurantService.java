@@ -26,7 +26,7 @@ public class RestaurantService {
 
     public RestaurantResponseDto createRestaurant( UUID ownerId,RestaurantCreateDto restaurantCreateDto){
         if(restaurantRepository.existsByName(restaurantCreateDto.name())){
-            throw new RestaurantAlreadyExistsException("Restaurant already exists");
+            throw new RestaurantAlreadyExistsException();
         }
         var restaurant = modelMapper.map(restaurantCreateDto, RestaurantEntity.class);
         restaurant.setOwnerId(ownerId);
@@ -35,16 +35,15 @@ public class RestaurantService {
     }
     @Transactional
     public void deleteRestaurant(UUID ownerId, UUID restaurantId){
-        var restaurant = restaurantRepository.findById(restaurantId).orElseThrow(() -> new RestaurantNotFoundException
-                ("Restaurant not found"));
+        var restaurant = restaurantRepository.findById(restaurantId).orElseThrow(RestaurantNotFoundException::new);
         if(!(restaurant.getOwnerId().equals(ownerId))){
-            throw new UnauthorizedAccessException("You are not authorized to access this restaurant.");
+            throw new UnauthorizedAccessException();
         }
         restaurantRepository.delete(restaurant);
     }
     public RestaurantResponseDto getRestaurantById(UUID restaurantId){
         var restaurant = restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new RestaurantNotFoundException("Restaurant not found"));
+                .orElseThrow(RestaurantNotFoundException::new);
         return modelMapper.map(restaurant, RestaurantResponseDto.class);
     }
     public List<RestaurantResponseDto> getAllRestaurants(){
@@ -57,14 +56,14 @@ public class RestaurantService {
     @Transactional
     public RestaurantResponseDto updateRestaurant(UUID ownerId, UUID restaurantId, RestaurantUpdateDto restaurantUpdateDto){
         var restaurant = restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new RestaurantNotFoundException("Restaurant not found"));
+                .orElseThrow(RestaurantNotFoundException::new);
         if(!(restaurant.getOwnerId().equals(ownerId))){
-            throw new UnauthorizedAccessException("You are not authorized to access this restaurant.");
+            throw new UnauthorizedAccessException();
         }
         boolean isChangingName = !(restaurant.getName().equals(restaurantUpdateDto.name()));
         boolean nameExists = restaurantRepository.existsByNameAndIdNot(restaurantUpdateDto.name(), restaurantId);
         if(isChangingName && nameExists){
-            throw new RestaurantAlreadyExistsException("The name of the restaurant already exists");
+            throw new RestaurantAlreadyExistsException();
         }
         modelMapper.map(restaurantUpdateDto, restaurant);
         var updatedRestaurant = restaurantRepository.save(restaurant);

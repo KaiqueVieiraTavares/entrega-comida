@@ -180,13 +180,11 @@ class UserServiceTest {
 
     @Test
     void getAllUsers_ShouldReturnEmptyList_WhenNoUsersFound() {
-        // Arrange
+
         when(userRepository.findAll()).thenReturn(List.of());
 
-        // Act
         List<ResponseDto> result = userService.getAllUsers();
 
-        // Assert
         assertTrue(result.isEmpty());
         verify(userRepository, times(1)).findAll();
         verify(modelMapper, never()).map(any(), any());

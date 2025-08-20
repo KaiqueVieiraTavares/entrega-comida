@@ -11,6 +11,7 @@
         <module name="eureka" />
         <module name="gateway" />
         <module name="shared-files" />
+        <module name="notification-service" />
       </profile>
       <profile name="Annotation profile for client-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -49,6 +50,7 @@
       <module name="demo" options="-parameters" />
       <module name="eureka" options="-parameters" />
       <module name="gateway" options="-parameters" />
+      <module name="notification-service" options="-parameters" />
       <module name="order-service" options="-parameters" />
       <module name="product-service" options="-parameters" />
       <module name="restaurant-service" options="-parameters" />

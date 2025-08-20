@@ -1,6 +1,7 @@
 package com.ms.restaurantservice.dtos;
 
 
+import com.ms.restaurantservice.enums.Category;
 
 public record RestaurantCreateDto(
         String name,
@@ -13,7 +14,7 @@ public record RestaurantCreateDto(
         String state,
         String cep,
         String description,
-        String category
+        Category category
 ) {
 }
 

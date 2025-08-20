@@ -1,5 +1,7 @@
 package com.ms.restaurantservice.dtos;
 
+import com.ms.restaurantservice.enums.Category;
+
 import java.util.UUID;
 
 public record RestaurantResponseDto(
@@ -13,7 +15,7 @@ public record RestaurantResponseDto(
         String state,
         String cep,
         String description,
-        String category
+        Category category
 ) {
 }
 
