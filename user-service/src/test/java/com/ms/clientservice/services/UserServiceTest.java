@@ -120,7 +120,7 @@ class UserServiceTest {
     }
     @Test
     void deleteUser(){
-        when(userRepository.findById(any(UUID.class))).thenReturn(Optional.of(expectedUserEntity));
+        when(userRepository.existsById(any(UUID.class))).thenReturn(Boolean.TRUE);
 
         userService.deleteClient(UUID.randomUUID());
 
@@ -129,7 +129,8 @@ class UserServiceTest {
 
     @Test
     void deleteUser_ShouldThrowWhenNotFound() {
-        when(userRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+        when(userRepository.existsById(any(UUID.class))).thenReturn(Boolean.FALSE);
+
 
         assertThrows(UserNotFoundException.class,
                 () -> userService.deleteClient(UUID.randomUUID())

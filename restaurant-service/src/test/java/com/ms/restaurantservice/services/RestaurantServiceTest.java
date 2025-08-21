@@ -9,7 +9,6 @@ import com.ms.restaurantservice.exceptions.RestaurantAlreadyExistsException;
 import com.ms.restaurantservice.exceptions.RestaurantNotFoundException;
 import com.ms.restaurantservice.exceptions.UnauthorizedAccessException;
 import com.ms.restaurantservice.repositories.RestaurantRepository;
-import org.hibernate.mapping.Any;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -94,7 +93,7 @@ class RestaurantServiceTest {
     }
     @Test
     void createRestaurant() {
-        when(restaurantRepository.existsByName(restaurantCreateDto.name())).thenReturn(false);
+        when(restaurantRepository.existsByName(restaurantCreateDto.name())).thenReturn(Boolean.valueOf(false));
         when(modelMapper.map(restaurantCreateDto, RestaurantEntity.class)).thenReturn(restaurantEntity);
         when(restaurantRepository.save(restaurantEntity)).thenReturn(restaurantEntity);
         when(modelMapper.map(restaurantEntity, RestaurantResponseDto.class)).thenReturn(restaurantResponseDto);
@@ -110,7 +109,7 @@ class RestaurantServiceTest {
     }
     @Test
     void createRestaurant_ShouldThrownExceptionWhenNameIsAlreadyUsed(){
-        when(restaurantRepository.existsByName(restaurantCreateDto.name())).thenReturn(true);
+        when(restaurantRepository.existsByName(restaurantCreateDto.name())).thenReturn(Boolean.valueOf(true));
 
         var exception = assertThrows(RestaurantAlreadyExistsException.class,() ->
                 restaurantService.createRestaurant(ownerId, restaurantCreateDto));
@@ -170,7 +169,7 @@ class RestaurantServiceTest {
     @Test
     void updateRestaurant() {
         when(restaurantRepository.findById(any(UUID.class))).thenReturn(Optional.of(restaurantEntity));
-        when(modelMapper.map(restaurantUpdateDto, RestaurantEntity.class)).thenReturn(restaurantEntity);
+        doNothing().when(modelMapper).map(any(RestaurantUpdateDto.class), any(RestaurantEntity.class));
         when(restaurantRepository.save(any(RestaurantEntity.class))).thenReturn(restaurantEntity);
         when(modelMapper.map(restaurantEntity, RestaurantResponseDto.class)).thenReturn(restaurantResponseDto);
 
@@ -178,7 +177,7 @@ class RestaurantServiceTest {
 
         assertEquals(restaurantResponseDto, response);
         verify(restaurantRepository,times(1)).findById(any(UUID.class));
-        verify(modelMapper,times(1)).map(restaurantUpdateDto, RestaurantEntity.class);
+        verify(modelMapper).map(eq(restaurantUpdateDto), any(RestaurantEntity.class));
         verify(restaurantRepository,times(1)).save(any(restaurantEntity.getClass()));
         verify(modelMapper,times(1)).map(restaurantEntity, RestaurantResponseDto.class);
     }
