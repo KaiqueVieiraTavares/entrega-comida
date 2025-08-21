@@ -7,6 +7,9 @@ import com.ms.orderservice.exceptions.OrderNotFoundException;
 import com.ms.orderservice.exceptions.UnauthorizedAccessException;
 import com.ms.orderservice.messaging.producer.OrderMessagingProducer;
 import com.ms.orderservice.repositories.OrderRepository;
+import com.ms.shared.dtos.stock.StockItemDto;
+import com.ms.shared.dtos.stock.StockValidationRequestDto;
+import com.ms.shared.enums.OrderStatus;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 

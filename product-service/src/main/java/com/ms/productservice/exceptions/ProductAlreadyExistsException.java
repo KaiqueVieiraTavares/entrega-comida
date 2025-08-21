@@ -1,7 +1,7 @@
 package com.ms.productservice.exceptions;
 
 public class ProductAlreadyExistsException extends RuntimeException {
-    public ProductAlreadyExistsException(String message) {
-        super(message);
+    public ProductAlreadyExistsException() {
+        super("The name of the product already exists");
     }
 }

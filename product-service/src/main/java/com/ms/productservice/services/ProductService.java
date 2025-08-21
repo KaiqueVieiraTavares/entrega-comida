@@ -25,20 +25,20 @@ public class ProductService {
     @Transactional
     public ProductResponseDTO createProduct(ProductRequestDto productRequestDto){
         if(productRepository.existsByName(productRequestDto.name())){
-            throw new ProductAlreadyExistsException("Product: " + productRequestDto.name() + " Already exists");
+            throw new ProductAlreadyExistsException();
         }
         var savedProduct = productRepository.save(modelMapper.map(productRequestDto, ProductEntity.class));
         return modelMapper.map(savedProduct, ProductResponseDTO.class);
     }
     @Transactional
     public ProductResponseDTO updateProduct(ProductRequestDto productRequestDto, UUID idProduct){
-        var product = productRepository.findById(idProduct).orElseThrow(()-> new ProductNotFoundException("Product not found"));
+        var product = productRepository.findById(idProduct).orElseThrow(ProductNotFoundException::new);
         modelMapper.map(productRequestDto, product);
         var updatedProduct = productRepository.save(product);
         return modelMapper.map(updatedProduct, ProductResponseDTO.class);
     }
     public ProductResponseDTO getProduct(UUID idProduct){
-        var product = productRepository.findById(idProduct).orElseThrow(() -> new ProductNotFoundException("Product not found"));
+        var product = productRepository.findById(idProduct).orElseThrow(ProductNotFoundException::new);
         return modelMapper.map(product, ProductResponseDTO.class);
     }
     public List<ProductResponseDTO> getAllProducts(){
@@ -47,7 +47,7 @@ public class ProductService {
     }
     @Transactional
     public void deleteProduct(UUID idProduct){
-        productRepository.delete(productRepository.findById(idProduct).orElseThrow(() -> new ProductNotFoundException("Product not found")));
+        productRepository.delete(productRepository.findById(idProduct).orElseThrow(ProductNotFoundException::new));
     }
 }
 
