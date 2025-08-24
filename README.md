@@ -26,7 +26,7 @@ Um sistema de entrega de comida desenvolvido com **arquitetura de microsserviço
   - WebSocket
 - **Banco de Dados**
   - Mysql
-- **JUnit & Mockito** → Testes unitários e de integração
+- **JUnit & Mockito** → Testes unitários 
 - **Docker** (futuramente)
 ---
 
