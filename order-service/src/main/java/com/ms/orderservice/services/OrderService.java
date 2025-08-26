@@ -45,9 +45,9 @@ public class OrderService {
     }
 
     public OrderResponseDto getOrder(UUID userId, UUID orderId) {
-        var order =  orderRepository.findById(orderId).orElseThrow(() -> new OrderNotFoundException("Order not found"));
+        var order =  orderRepository.findById(orderId).orElseThrow(OrderNotFoundException::new);
         if(!(order.getUserId().equals(userId))){
-            throw new UnauthorizedAccessException("You do not have access to this content");
+            throw new UnauthorizedAccessException();
         }
         return modelMapper.map(order, OrderResponseDto.class);
 
@@ -60,18 +60,18 @@ public class OrderService {
     }
     @Transactional
     public void deleteOrder(UUID userId, UUID orderId){
-        var order = orderRepository.findById(orderId).orElseThrow(()-> new OrderNotFoundException("Order not found"));
+        var order = orderRepository.findById(orderId).orElseThrow(OrderNotFoundException::new);
         if(!(order.getUserId().equals(userId))){
-            throw new UnauthorizedAccessException("You do not have access to this content");
+            throw new UnauthorizedAccessException();
         }
         orderRepository.delete(order);
     }
 
     @Transactional
     public OrderResponseDto updateOrder(UUID userId, UUID orderId, OrderRequestDto orderRequestDto){
-        var order = orderRepository.findById(orderId).orElseThrow(()-> new OrderNotFoundException("Order not found"));
+        var order = orderRepository.findById(orderId).orElseThrow(OrderNotFoundException::new);
         if(!(order.getUserId().equals(userId))){
-            throw new UnauthorizedAccessException("You do not have access to this content");
+            throw new UnauthorizedAccessException();
         }
         if(orderRequestDto.items() == null || orderRequestDto.items().isEmpty()) {
             throw new IllegalArgumentException("Order must contain at least one item.");
@@ -89,9 +89,9 @@ public class OrderService {
     }
     @Transactional
     public OrderResponseDto confirmOrder(UUID userId, UUID orderId){
-        var order=orderRepository.findById(orderId).orElseThrow(() -> new OrderNotFoundException("Order not found"));
+        var order=orderRepository.findById(orderId).orElseThrow(OrderNotFoundException::new);
         if(!(order.getUserId().equals(userId))){
-            throw new UnauthorizedAccessException("You do not have access to this content");
+            throw new UnauthorizedAccessException();
         }
         orderMessagingProducer.sendStockUpdate(order.getItems().stream().map(
                 itemEntity -> new StockItemDto(itemEntity.getProductId(),
