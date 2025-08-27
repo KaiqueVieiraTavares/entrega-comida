@@ -5,7 +5,9 @@ import com.ms.deliveryservice.dtos.DeliveryRequestDTO;
 import com.ms.deliveryservice.dtos.DeliveryResponseDTO;
 import com.ms.deliveryservice.dtos.UpdateDeliveryStatusDTO;
 import com.ms.deliveryservice.entities.DeliveryEntity;
-import com.ms.deliveryservice.enums.DeliveryStatus;
+import com.ms.deliveryservice.exceptions.DeliveryAlreadyCompletedException;
+import com.ms.shared.enums.DeliveryStatus;
+
 import com.ms.deliveryservice.exceptions.DeliveryNotFoundException;
 import com.ms.deliveryservice.repositories.DeliveryRepository;
 import org.modelmapper.ModelMapper;
@@ -29,7 +31,7 @@ public class DeliveryService {
     }
 
     public List<DeliveryResponseDTO> getAvailableDeliveries(){
-        return deliveryRepository.findByStatus(DeliveryStatus.PENDING).stream().map(delivery
+        return deliveryRepository.findByStatus(DeliveryStatus.WAITING_ASSIGNMENT).stream().map(delivery
                 -> modelMapper.map(delivery, DeliveryResponseDTO.class)).toList();
     }
 
@@ -40,25 +42,23 @@ public class DeliveryService {
 
 
     public DeliveryResponseDTO assignDelivery(UUID deliveryPersonId, UUID deliveryId ){
-        var delivery = deliveryRepository.findById(deliveryId).orElseThrow(() ->
-                new DeliveryNotFoundException("Delivery not found"));
+        var delivery = deliveryRepository.findById(deliveryId).orElseThrow(DeliveryNotFoundException::new);
         delivery.setDeliveryPersonId(deliveryPersonId);
         delivery.setStatus(DeliveryStatus.ASSIGNED);
         return modelMapper.map(deliveryRepository.save(delivery), DeliveryResponseDTO.class);
     }
 
     public DeliveryResponseDTO updateDelivery(UUID deliveryId, UpdateDeliveryStatusDTO updateDeliveryStatusDTO){
-        var delivery = deliveryRepository.findById(deliveryId).orElseThrow(() ->
-                new DeliveryNotFoundException("Delivery not found"));
+        var delivery = deliveryRepository.findById(deliveryId).orElseThrow(DeliveryNotFoundException::new);
         delivery.setStatus(updateDeliveryStatusDTO.status());
         return modelMapper.map(deliveryRepository.save(delivery), DeliveryResponseDTO.class);
     }
     public void cancelDelivery(UUID deliveryId){
         var delivery = deliveryRepository.findById(deliveryId).orElseThrow(DeliveryNotFoundException::new);
         if(delivery.getStatus() == DeliveryStatus.DELIVERED){
-            throw new IllegalStateException("Cannot cancel a delivered delivery");
+            throw new DeliveryAlreadyCompletedException("Cannot cancel a delivered delivery");
         }
-        delivery.setStatus(DeliveryStatus.CANCELLED);
-        var updatedDeliveryStatus = deliveryRepository.save(delivery);
+        delivery.setStatus(DeliveryStatus.FAILED);
+        deliveryRepository.save(delivery);
     }
 }

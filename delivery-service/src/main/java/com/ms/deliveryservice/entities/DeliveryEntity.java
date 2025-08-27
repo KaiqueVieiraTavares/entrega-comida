@@ -1,7 +1,8 @@
 package com.ms.deliveryservice.entities;
 
 
-import com.ms.deliveryservice.enums.DeliveryStatus;
+
+import com.ms.shared.enums.DeliveryStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -40,7 +41,7 @@ public class DeliveryEntity {
 
     @PrePersist
     public void prePersist() {
-        this.status = DeliveryStatus.PENDING;
+        this.status = DeliveryStatus.WAITING_ASSIGNMENT;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }

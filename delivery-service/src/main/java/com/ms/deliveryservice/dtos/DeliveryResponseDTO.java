@@ -1,6 +1,8 @@
 package com.ms.deliveryservice.dtos;
 
-import com.ms.deliveryservice.enums.DeliveryStatus;
+
+
+import com.ms.shared.enums.DeliveryStatus;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
