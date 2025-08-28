@@ -1,7 +1,9 @@
 package com.ms.orderservice.services;
 
+import com.example.sharedfilesmodule.enums.OrderStatus;
 import com.ms.orderservice.dtos.*;
 
+import com.ms.orderservice.entities.OrderEntity;
 import com.ms.orderservice.entities.OrderItemEntity;
 import com.ms.orderservice.exceptions.OrderNotFoundException;
 import com.ms.orderservice.exceptions.UnauthorizedAccessException;
@@ -9,8 +11,8 @@ import com.ms.orderservice.messaging.producer.OrderMessagingProducer;
 import com.ms.orderservice.repositories.OrderRepository;
 import com.ms.shared.dtos.stock.StockItemDto;
 import com.ms.shared.dtos.stock.StockValidationRequestDto;
-import com.ms.shared.enums.OrderStatus;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 
+@Slf4j
 @Service
 public class OrderService {
     private final OrderMessagingProducer orderMessagingProducer;
@@ -33,15 +36,26 @@ public class OrderService {
     }
     @Transactional
     public CreateOrderResponseDto createOrder(UUID userId, OrderRequestDto orderRequestDto){
-        UUID orderId = UUID.randomUUID();
-        List<StockItemDto> items = orderRequestDto.items().stream().map(item ->
-                new StockItemDto(item.productId(), item.quantity()))
-                .toList();
-        StockValidationRequestDto validation = new StockValidationRequestDto(orderId, userId, items);
+        try {
+            UUID orderId = UUID.randomUUID();
+            var orderEntity = new OrderEntity();
+            orderEntity.setUserId(userId);
+            orderEntity.setId(orderId);
+            orderEntity.setStatus(OrderStatus.PENDING_VALIDATION);
+            orderRepository.save(orderEntity);
+            List<StockItemDto> items = orderRequestDto.items().stream().map(item ->
+                            new StockItemDto(item.productId(), item.quantity()))
+                    .toList();
+            StockValidationRequestDto validation = new StockValidationRequestDto(orderId, userId, items);
 
-        orderMessagingProducer.sendStockValidationRequest(validation);
+            orderMessagingProducer.sendStockValidationRequest(validation);
 
-        return new CreateOrderResponseDto(orderId, "Request received, awaiting validation");
+            return new CreateOrderResponseDto(orderId, "Request received, awaiting validation");
+        }catch(Exception e){
+            log.error("Error creating order for user: {}" ,userId, e);
+            throw new RuntimeException("");
+        }
+
     }
 
     public OrderResponseDto getOrder(UUID userId, UUID orderId) {

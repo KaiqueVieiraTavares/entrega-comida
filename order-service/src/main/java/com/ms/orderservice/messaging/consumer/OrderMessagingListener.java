@@ -1,10 +1,10 @@
 package com.ms.orderservice.messaging.consumer;
 
 
+import com.example.sharedfilesmodule.enums.OrderStatus;
 import com.ms.orderservice.entities.OrderEntity;
 import com.ms.orderservice.repositories.OrderRepository;
 import com.ms.shared.dtos.stock.StockValidationResponseDto;
-import com.ms.shared.enums.OrderStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -22,12 +22,15 @@ public class OrderMessagingListener {
 
     @KafkaListener(topics = "stock-valid-topic", groupId = "order-service")
     public void handleStockIsValid(StockValidationResponseDto stockValidationResponseDto){
-
-        OrderEntity order = new OrderEntity();
-        order.setId(stockValidationResponseDto.orderId());
-        order.setStatus(OrderStatus.PENDING_PAYMENT);
-        order.setTotalPrice(stockValidationResponseDto.totalPrice());
-        orderRepository.save(order);
+        Optional<OrderEntity> orderEntity = orderRepository.findById(stockValidationResponseDto.orderId());
+        if(orderEntity.isPresent()){
+          var order = orderEntity.get();
+          order.setStatus(OrderStatus.PENDING_PAYMENT);
+          order.setTotalPrice(stockValidationResponseDto.totalPrice());
+          orderRepository.save(order);
+        } else{
+            log.error("Order with id: {} not found to validate", stockValidationResponseDto.orderId());
+        }
     }
 
     @KafkaListener(topics = "stock-invalid-topic", groupId = "order-service")
