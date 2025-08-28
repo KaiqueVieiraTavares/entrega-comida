@@ -1,5 +1,0 @@
-com\ms\shared\dtos\stock\StockValidationRequestDto.class
-com\ms\shared\dtos\stock\StockItemDto.class
-com\ms\shared\dtos\stock\StockValidationResponseDto.class
-com\ms\shared\dtos\stock\StockUpdateMessage.class
-com\ms\shared\enums\OrderStatus.class

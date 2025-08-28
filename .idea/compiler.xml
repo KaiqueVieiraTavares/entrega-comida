@@ -8,9 +8,9 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="authentication-service" />
+        <module name="shared-files-module" />
         <module name="eureka" />
         <module name="gateway" />
-        <module name="shared-files" />
         <module name="notification-service" />
       </profile>
       <profile name="Annotation profile for client-service" enabled="true">
@@ -20,10 +20,10 @@
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.34/lombok-1.18.34.jar" />
         </processorPath>
-        <module name="user-service" />
         <module name="client-service" />
+        <module name="user-service" />
       </profile>
-      <profile name="Annotation profile for delivery-service" enabled="true">
+      <profile name="Annotation profile for restaurant-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -39,6 +39,7 @@
     <bytecodeTargetLevel>
       <module name="auth-service" target="21" />
       <module name="demo" target="21" />
+      <module name="shared-files" target="16" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
@@ -54,6 +55,7 @@
       <module name="order-service" options="-parameters" />
       <module name="product-service" options="-parameters" />
       <module name="restaurant-service" options="-parameters" />
+      <module name="shared-files-module" options="-parameters" />
       <module name="user-service" options="-parameters" />
     </option>
   </component>
