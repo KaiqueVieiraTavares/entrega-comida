@@ -5,6 +5,8 @@ import com.ms.orderservice.dtos.*;
 
 import com.ms.orderservice.entities.OrderEntity;
 import com.ms.orderservice.entities.OrderItemEntity;
+import com.ms.orderservice.exceptions.BusinessException;
+import com.ms.orderservice.exceptions.KafkaSendException;
 import com.ms.orderservice.exceptions.OrderNotFoundException;
 import com.ms.orderservice.exceptions.UnauthorizedAccessException;
 import com.ms.orderservice.messaging.producer.OrderMessagingProducer;
@@ -102,16 +104,41 @@ public class OrderService {
         return modelMapper.map(orderRepository.save(order), OrderResponseDto.class);
     }
     @Transactional
-    public OrderResponseDto confirmOrder(UUID userId, UUID orderId){
-        var order=orderRepository.findById(orderId).orElseThrow(OrderNotFoundException::new);
+    public OrderResponseDto confirmOrder(UUID userId, UUID orderId) {
+        var order = orderRepository.findById(orderId).orElseThrow(OrderNotFoundException::new);
+        if (!(order.getUserId().equals(userId))) {
+            throw new UnauthorizedAccessException();
+        }
+        try {
+            orderMessagingProducer.sendStockUpdate(order.getItems().stream().map(
+                    itemEntity -> new StockItemDto(itemEntity.getProductId(),
+                            itemEntity.getQuantity())
+            ).toList());
+            order.setStatus(OrderStatus.PAID);
+            return modelMapper.map(orderRepository.save(order), OrderResponseDto.class);
+        } catch (KafkaSendException e){
+            order.setStatus(OrderStatus.PENDING_SYNC);
+            orderRepository.save(order);
+            throw new BusinessException("Order confirmed, but inventory synchronization is pending");
+        }
+    }
+
+    @Transactional
+    public OrderResponseDto retryOrderSync(UUID userId, UUID orderId){
+        var order = orderRepository.findById(orderId).orElseThrow(OrderNotFoundException::new);
         if(!(order.getUserId().equals(userId))){
             throw new UnauthorizedAccessException();
         }
-        orderMessagingProducer.sendStockUpdate(order.getItems().stream().map(
-                itemEntity -> new StockItemDto(itemEntity.getProductId(),
-                        itemEntity.getQuantity())
-        ).toList());
-        order.setStatus(OrderStatus.PAID);
-        return modelMapper.map(orderRepository.save(order), OrderResponseDto.class);
+        if(order.getStatus()!=OrderStatus.PENDING_SYNC){
+            throw new BusinessException("Request is not pending synchronization");
+        }
+        try{
+            orderMessagingProducer.sendStockUpdate(order.getItems().stream().map(item ->
+                    new StockItemDto(item.getProductId(), item.getQuantity())).toList());
+            order.setStatus(OrderStatus.PAID);
+            return modelMapper.map(orderRepository.save(order), OrderResponseDto.class);
+        } catch (KafkaSendException e){
+            throw new BusinessException("Falha na sincronização. Tente novamente mais tarde.");
+        }
     }
 }

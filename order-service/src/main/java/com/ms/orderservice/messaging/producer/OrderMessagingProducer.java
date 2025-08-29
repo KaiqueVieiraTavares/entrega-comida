@@ -1,6 +1,7 @@
 package com.ms.orderservice.messaging.producer;
 
 
+import com.ms.orderservice.exceptions.KafkaSendException;
 import com.ms.shared.dtos.stock.StockItemDto;
 import com.ms.shared.dtos.stock.StockUpdateMessage;
 import com.ms.shared.dtos.stock.StockValidationRequestDto;
@@ -10,6 +11,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.kafka.support.SendResult;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 @Slf4j
 @Component
@@ -39,15 +43,15 @@ public class OrderMessagingProducer {
 
     public void sendStockUpdate(List<StockItemDto> items) {
         var message = new StockUpdateMessage(items);
-        CompletableFuture<SendResult<String, Object>> future = kafkaTemplate.send("order-update-stock", message);
+        try {
+            SendResult<String, Object> result = kafkaTemplate.send("order-update-stock", message).get(10, TimeUnit.SECONDS);
+            log.info("Message sent successfully! Topic: {}, Partition: {}, Ofsset: {} ", result.getRecordMetadata().topic(),
+                    result.getRecordMetadata().partition(), result.getRecordMetadata().offset());
 
-        future.thenAccept(sendResult -> {
-            log.info("Mensagem enviada com sucesso!");
-            log.info("{}", sendResult.getRecordMetadata());
-        }).exceptionally(ex -> {
-            log.error("Error sending stock update: {}", ex.getMessage());
-            return null;
-        });
+        } catch (InterruptedException| ExecutionException | TimeoutException e) {
+            log.error("Critical failure sending message to Kafka after automatic retries: {}", e.getMessage());
+            throw new KafkaSendException("Failed to process inventory update. Please try again");
+        }
     }
 
 

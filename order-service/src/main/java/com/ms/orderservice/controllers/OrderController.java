@@ -61,4 +61,9 @@ public class OrderController {
         var response = orderService.confirmOrder(UUID.fromString(userId), orderId);
         return ResponseEntity.ok(response);
     }
+    @PostMapping("/retry/{orderId}")
+    public ResponseEntity<OrderResponseDto> retryOrder(@RequestHeader("X-User-Id") String userId, @PathVariable UUID orderId){
+        var responseRetry = orderService.retryOrderSync(UUID.fromString(userId), orderId);
+        return ResponseEntity.ok(responseRetry);
+    }
 }
