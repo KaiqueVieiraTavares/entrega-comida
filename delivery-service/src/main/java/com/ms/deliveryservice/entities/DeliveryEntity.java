@@ -2,7 +2,7 @@ package com.ms.deliveryservice.entities;
 
 
 
-import com.ms.shared.enums.DeliveryStatus;
+import com.example.sharedfilesmodule.enums.DeliveryStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

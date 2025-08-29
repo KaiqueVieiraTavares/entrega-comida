@@ -1,4 +1,4 @@
-package com.ms.deliveryservice.message.MessageListener;
+package com.ms.deliveryservice.messaging.listener;
 
 import com.ms.deliveryservice.dtos.DeliveryRequestDTO;
 import com.ms.deliveryservice.dtos.OrderConfirmedEvent;

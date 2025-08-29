@@ -1,7 +1,7 @@
 package com.ms.deliveryservice.repositories;
 
+import com.example.sharedfilesmodule.enums.DeliveryStatus;
 import com.ms.deliveryservice.entities.DeliveryEntity;
-import com.ms.shared.enums.DeliveryStatus;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

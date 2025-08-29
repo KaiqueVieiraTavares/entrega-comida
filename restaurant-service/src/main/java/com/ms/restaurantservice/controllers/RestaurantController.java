@@ -52,4 +52,8 @@ public class RestaurantController {
         restaurantService.deleteRestaurant(UUID.fromString(ownerId), restaurantId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+    @GetMapping("/{restaurantId}/address")
+    public String getAddress(@PathVariable UUID restaurantId){
+        return restaurantService.getRestaurantAddress(restaurantId);
+    }
 }

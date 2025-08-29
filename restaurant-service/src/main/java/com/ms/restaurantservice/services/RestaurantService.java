@@ -69,4 +69,9 @@ public class RestaurantService {
         var updatedRestaurant = restaurantRepository.save(restaurant);
         return modelMapper.map(updatedRestaurant, RestaurantResponseDto.class);
     }
+
+    public String getRestaurantAddress(UUID restaurantId){
+        return restaurantRepository.findById(restaurantId).map(RestaurantEntity::getAddress).
+                orElseThrow(RestaurantNotFoundException::new);
+    }
 }

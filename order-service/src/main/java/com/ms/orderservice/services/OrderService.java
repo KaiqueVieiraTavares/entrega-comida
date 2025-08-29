@@ -1,5 +1,6 @@
 package com.ms.orderservice.services;
 
+import com.example.sharedfilesmodule.dtos.OrderConfirmedDtoDelivery;
 import com.example.sharedfilesmodule.enums.OrderStatus;
 import com.ms.orderservice.dtos.*;
 
@@ -9,6 +10,7 @@ import com.ms.orderservice.exceptions.BusinessException;
 import com.ms.orderservice.exceptions.KafkaSendException;
 import com.ms.orderservice.exceptions.OrderNotFoundException;
 import com.ms.orderservice.exceptions.UnauthorizedAccessException;
+import com.ms.orderservice.messaging.producer.DeliveryMessagingProducer;
 import com.ms.orderservice.messaging.producer.OrderMessagingProducer;
 import com.ms.orderservice.repositories.OrderRepository;
 import com.ms.shared.dtos.stock.StockItemDto;
@@ -28,13 +30,14 @@ public class OrderService {
     private final OrderMessagingProducer orderMessagingProducer;
     private final OrderRepository orderRepository;
     private final ModelMapper modelMapper;
+    private final DeliveryMessagingProducer deliveryMessagingProducer;
 
-
-    public OrderService(OrderMessagingProducer orderMessagingProducer, OrderRepository orderRepository, ModelMapper modelMapper) {
+    public OrderService(OrderMessagingProducer orderMessagingProducer, OrderRepository orderRepository, ModelMapper modelMapper, DeliveryMessagingProducer deliveryMessagingProducer) {
         this.orderMessagingProducer = orderMessagingProducer;
         this.orderRepository = orderRepository;
         this.modelMapper = modelMapper;
 
+        this.deliveryMessagingProducer = deliveryMessagingProducer;
     }
     @Transactional
     public CreateOrderResponseDto createOrder(UUID userId, OrderRequestDto orderRequestDto){
@@ -115,7 +118,13 @@ public class OrderService {
                             itemEntity.getQuantity())
             ).toList());
             order.setStatus(OrderStatus.PAID);
-            return modelMapper.map(orderRepository.save(order), OrderResponseDto.class);
+            var savedOrder = orderRepository.save(order);
+            try{
+                deliveryMessagingProducer.sendOrderConfirmed(savedOrder.getId(), savedOrder.getRestaurantId());
+            } catch (KafkaSendException e){
+                log.error("Error sending order confirmation to Kafka. OrderId: {}", savedOrder.getId(), e);
+            }
+            return modelMapper.map(savedOrder, OrderResponseDto.class);
         } catch (KafkaSendException e){
             order.setStatus(OrderStatus.PENDING_SYNC);
             orderRepository.save(order);

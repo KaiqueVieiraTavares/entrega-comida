@@ -1,7 +1,6 @@
 package com.ms.deliveryservice.dtos;
 
-import com.ms.shared.enums.DeliveryStatus;
-
+import com.example.sharedfilesmodule.enums.DeliveryStatus;
 public record UpdateDeliveryStatusDTO(
         DeliveryStatus status
 ) {

@@ -1,12 +1,13 @@
 package com.ms.deliveryservice.services;
 
 
+import com.example.sharedfilesmodule.enums.DeliveryStatus;
 import com.ms.deliveryservice.dtos.DeliveryRequestDTO;
 import com.ms.deliveryservice.dtos.DeliveryResponseDTO;
 import com.ms.deliveryservice.dtos.UpdateDeliveryStatusDTO;
 import com.ms.deliveryservice.entities.DeliveryEntity;
 import com.ms.deliveryservice.exceptions.DeliveryAlreadyCompletedException;
-import com.ms.shared.enums.DeliveryStatus;
+
 
 import com.ms.deliveryservice.exceptions.DeliveryNotFoundException;
 import com.ms.deliveryservice.repositories.DeliveryRepository;
