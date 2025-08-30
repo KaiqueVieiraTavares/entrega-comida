@@ -26,18 +26,16 @@ public class OrderMessagingProducer {
     }
 
 
-    public void sendStockValidationRequest(StockValidationRequestDto stockValidationRequestDto){
-        try {
-            CompletableFuture<SendResult<String, Object>> future = kafkaTemplate.send("order.validate-stock", stockValidationRequestDto);
-
-            future.thenAccept(sendResult -> {
-                log.info("Stock validation request sent successfully for order: {} ", stockValidationRequestDto.orderId());
-            }).exceptionally(ex -> {
-                log.error("Error sending stock validation for order: {}", stockValidationRequestDto.orderId(), ex);
-                return null;
-            });
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+    public void sendStockValidationRequest(StockValidationRequestDto stockValidationRequestDto) {
+        try{
+            SendResult<String,Object> result = kafkaTemplate.send("order.validate-stock", stockValidationRequestDto).get(10, TimeUnit.SECONDS);
+            log.info("Message sent sucessfully! Topic: {}, Partition: {}, Ofsset: {} ",
+                    result.getRecordMetadata().topic(),
+                    result.getRecordMetadata().partition(),
+                    result.getRecordMetadata().offset());
+        } catch (InterruptedException| ExecutionException| TimeoutException e ){
+            log.error("Critical failure sending message to Kafka after automatic retries: {}", e.getMessage());
+            throw new KafkaSendException("Failed to process inventory validation. Please try again");
         }
     }
 
@@ -45,7 +43,7 @@ public class OrderMessagingProducer {
         var message = new StockUpdateMessage(items);
         try {
             SendResult<String, Object> result = kafkaTemplate.send("order-update-stock", message).get(10, TimeUnit.SECONDS);
-            log.info("Message sent successfully! Topic: {}, Partition: {}, Ofsset: {} ", result.getRecordMetadata().topic(),
+            log.info("Message sent successfully! Topic: {}, Partition: {}, Offset: {} ", result.getRecordMetadata().topic(),
                     result.getRecordMetadata().partition(), result.getRecordMetadata().offset());
 
         } catch (InterruptedException| ExecutionException | TimeoutException e) {
