@@ -81,4 +81,8 @@ public class UserService {
                  .orElseThrow(() -> new UserNotFoundException("User not found"));
          return modelMapper.map(user, UserResponseDto.class);
     }
+    public String getAddress(UUID id){
+         var user  =userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"));
+         return user.getAddress();
+    }
 }

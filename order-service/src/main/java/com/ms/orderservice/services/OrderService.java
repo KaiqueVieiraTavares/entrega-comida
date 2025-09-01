@@ -120,7 +120,7 @@ public class OrderService {
             order.setStatus(OrderStatus.PAID);
             var savedOrder = orderRepository.save(order);
             try{
-                deliveryMessagingProducer.sendOrderConfirmed(savedOrder.getId(), savedOrder.getRestaurantId());
+                deliveryMessagingProducer.sendOrderConfirmed(savedOrder.getUserId(), savedOrder.getId(), savedOrder.getRestaurantId());
             } catch (KafkaSendException e){
                 log.error("Error sending order confirmation to Kafka. OrderId: {}", savedOrder.getId(), e);
             }

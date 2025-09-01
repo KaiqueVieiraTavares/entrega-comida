@@ -6,6 +6,9 @@ import com.ms.clientservice.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
+
 @RequestMapping("/users")
 public class InternalController {
 
@@ -31,5 +34,9 @@ private final UserService userService;
     public ResponseEntity<UserResponseDto> registerUser(@RequestBody RegisterDto registerDto){
         var response = userService.registerUser(registerDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+    @GetMapping("/{userId}/address")
+    public String getAddress(@PathVariable UUID userId){
+        return userService.getAddress(userId);
     }
 }
