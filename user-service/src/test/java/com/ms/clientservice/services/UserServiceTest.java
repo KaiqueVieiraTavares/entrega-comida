@@ -41,6 +41,7 @@ class UserServiceTest {
     @InjectMocks
     private UserService userService;
     private final String username = "Joao";
+    private final String address = "Rua Exemplo, 123";
     private final String email = "joao@email.com";
     private final String password = "123456";
     private final String phone = "11999999999";
@@ -58,6 +59,7 @@ class UserServiceTest {
         expectedUserEntity = new UserEntity(
                 UUID.randomUUID(),
                 username,
+                address,
                 email,
                 phone,
                 cpf,

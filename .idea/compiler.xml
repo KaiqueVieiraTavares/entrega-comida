@@ -10,8 +10,8 @@
         <module name="authentication-service" />
         <module name="shared-files-module" />
         <module name="eureka" />
-        <module name="gateway" />
         <module name="notification-service" />
+        <module name="gateway-service" />
       </profile>
       <profile name="Annotation profile for client-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -39,6 +39,7 @@
     <bytecodeTargetLevel>
       <module name="auth-service" target="21" />
       <module name="demo" target="21" />
+      <module name="gateway" target="21" />
       <module name="shared-files" target="16" />
     </bytecodeTargetLevel>
   </component>
@@ -51,6 +52,7 @@
       <module name="demo" options="-parameters" />
       <module name="eureka" options="-parameters" />
       <module name="gateway" options="-parameters" />
+      <module name="gateway-service" options="-parameters" />
       <module name="notification-service" options="-parameters" />
       <module name="order-service" options="-parameters" />
       <module name="product-service" options="-parameters" />

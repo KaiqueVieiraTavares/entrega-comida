@@ -19,11 +19,13 @@
         <option value="$PROJECT_DIR$/shared-files/pom.xml" />
         <option value="$PROJECT_DIR$/notification-service/pom.xml" />
         <option value="$PROJECT_DIR$/Shared-Files-module/pom.xml" />
+        <option value="$PROJECT_DIR$/gateway-service/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
       <set>
         <option value="$PROJECT_DIR$/auth-service/pom.xml" />
+        <option value="$PROJECT_DIR$/gateway/pom.xml" />
         <option value="$PROJECT_DIR$/shared-files/pom.xml" />
       </set>
     </option>
