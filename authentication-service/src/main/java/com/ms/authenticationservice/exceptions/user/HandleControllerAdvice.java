@@ -1,6 +1,8 @@
 package com.ms.authenticationservice.exceptions.user;
 
 
+import com.ms.authenticationservice.controllers.AuthUserController;
+import com.ms.authenticationservice.exceptions.deliveryPerson.VehiclePlateAlreadyExists;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.Optional;
 
-@RestControllerAdvice
+@RestControllerAdvice(basePackageClasses = AuthUserController.class)
 public class HandleControllerAdvice {
 
 

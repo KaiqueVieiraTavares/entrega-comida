@@ -1,12 +1,13 @@
 package com.ms.authenticationservice.exceptions.deliveryPerson;
 
+import com.example.deliverypersonservice.controllers.DeliveryPersonController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice
+@RestControllerAdvice(basePackageClasses = DeliveryPersonController.class)
 public class HandleControllerAdvice {
 
     @ExceptionHandler(VehiclePlateAlreadyExists.class)

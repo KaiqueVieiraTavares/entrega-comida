@@ -1,8 +1,8 @@
 package com.example.deliverypersonservice.controllers;
 
-import com.example.deliverypersonservice.dtos.DeliveryPersonRequestDTO;
-import com.example.deliverypersonservice.dtos.DeliveryPersonResponseDTO;
 import com.example.deliverypersonservice.services.DeliveryPersonService;
+import com.example.sharedfilesmodule.dtos.deliveryperson.DeliveryPersonRequestDTO;
+import com.example.sharedfilesmodule.dtos.deliveryperson.DeliveryPersonResponseDto;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,11 +21,11 @@ public class DeliveryPersonController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DeliveryPersonResponseDTO> getDeliveryPerson(@PathVariable UUID id){
+    public ResponseEntity<DeliveryPersonResponseDto> getDeliveryPerson(@PathVariable UUID id){
         return ResponseEntity.ok(deliveryPersonService.getDeliveryPerson(id));
     }
     @GetMapping()
-    public ResponseEntity<List<DeliveryPersonResponseDTO>> getAllDeliveryPerson(){
+    public ResponseEntity<List<DeliveryPersonResponseDto>> getAllDeliveryPerson(){
         return ResponseEntity.ok(deliveryPersonService.getAllDeliveryPerson());
     }
     @DeleteMapping("/{id}")
@@ -34,7 +34,7 @@ public class DeliveryPersonController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
     @PutMapping("/{id}")
-    public ResponseEntity<DeliveryPersonResponseDTO> updateDeliveryPerson(@PathVariable UUID id, @RequestBody @Valid DeliveryPersonRequestDTO deliveryPersonRequestDTO){
+    public ResponseEntity<DeliveryPersonResponseDto> updateDeliveryPerson(@PathVariable UUID id, @RequestBody @Valid DeliveryPersonRequestDTO deliveryPersonRequestDTO){
         return ResponseEntity.ok(deliveryPersonService.updateDeliveryPerson(id, deliveryPersonRequestDTO));
     }
 }

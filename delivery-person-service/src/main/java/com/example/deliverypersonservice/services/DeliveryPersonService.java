@@ -1,9 +1,9 @@
 package com.example.deliverypersonservice.services;
 
-import com.example.deliverypersonservice.dtos.DeliveryPersonRequestDTO;
-import com.example.deliverypersonservice.dtos.DeliveryPersonResponseDTO;
 import com.example.deliverypersonservice.exceptions.DeliveryPersonNotFound;
 import com.example.deliverypersonservice.repositories.DeliveryPersonRepository;
+import com.example.sharedfilesmodule.dtos.deliveryperson.DeliveryPersonRequestDTO;
+import com.example.sharedfilesmodule.dtos.deliveryperson.DeliveryPersonResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -21,25 +21,25 @@ public class DeliveryPersonService {
         this.deliveryPersonRepository = deliveryPersonRepository;
     }
 
-    public DeliveryPersonResponseDTO getDeliveryPerson(UUID id){
+    public DeliveryPersonResponseDto getDeliveryPerson(UUID id){
         var deliveryPerson = deliveryPersonRepository.findById(id).orElseThrow(() -> {
             log.error("Delivery person with id: {} not found!" ,id);
             return new DeliveryPersonNotFound();
         });
-        return modelMapper.map(deliveryPerson, DeliveryPersonResponseDTO.class);
+        return modelMapper.map(deliveryPerson, DeliveryPersonResponseDto.class);
     }
-    public List<DeliveryPersonResponseDTO> getAllDeliveryPerson(){
+    public List<DeliveryPersonResponseDto> getAllDeliveryPerson(){
         return deliveryPersonRepository.findAll().stream().map(deliveryPersonEntity ->
-                modelMapper.map(deliveryPersonEntity, DeliveryPersonResponseDTO.class)).toList();
+                modelMapper.map(deliveryPersonEntity, DeliveryPersonResponseDto.class)).toList();
     }
-    public DeliveryPersonResponseDTO updateDeliveryPerson(UUID id, DeliveryPersonRequestDTO deliveryPersonRequestDTO){
+    public DeliveryPersonResponseDto updateDeliveryPerson(UUID id, DeliveryPersonRequestDTO deliveryPersonRequestDTO){
        var deliveryPerson = deliveryPersonRepository.findById(id).orElseThrow(() -> {
            log.error("Delivery person with id: {} not found!" ,id);
            return new DeliveryPersonNotFound();
        });
        modelMapper.map(deliveryPersonRequestDTO, deliveryPerson);
       var savedDeliveryPerson = deliveryPersonRepository.save(deliveryPerson);
-       return modelMapper.map(savedDeliveryPerson, DeliveryPersonResponseDTO.class);
+       return modelMapper.map(savedDeliveryPerson, DeliveryPersonResponseDto.class);
     }
 
     public void deleteDeliveryPerson(UUID id){
