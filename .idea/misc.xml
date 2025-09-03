@@ -20,6 +20,7 @@
         <option value="$PROJECT_DIR$/notification-service/pom.xml" />
         <option value="$PROJECT_DIR$/Shared-Files-module/pom.xml" />
         <option value="$PROJECT_DIR$/gateway-service/pom.xml" />
+        <option value="$PROJECT_DIR$/delivery-person-service/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
