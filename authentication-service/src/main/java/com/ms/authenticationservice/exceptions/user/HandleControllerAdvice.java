@@ -1,7 +1,6 @@
-package com.ms.authenticationservice.exceptions;
+package com.ms.authenticationservice.exceptions.user;
 
 
-import feign.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +22,8 @@ public class HandleControllerAdvice {
         return ResponseEntity.of(Optional.of(problem));
     }
 
-    @ExceptionHandler(EmailAlreadyExistsException.class)
-    public ResponseEntity<ProblemDetail> handleEmailAlreadyExists(EmailAlreadyExistsException e){
+    @ExceptionHandler(UserEmailAlreadyExistsException.class)
+    public ResponseEntity<ProblemDetail> handleEmailAlreadyExists(UserEmailAlreadyExistsException e){
         var problem = ProblemDetail.forStatus(HttpStatus.CONFLICT);
         problem.setDetail("Email already exists");
         problem.setTitle(e.getMessage());

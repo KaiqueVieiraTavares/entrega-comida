@@ -2,14 +2,13 @@ package com.ms.clientservice.services;
 
 
 
-import com.ms.clientservice.dtos.RegisterDto;
+import com.example.sharedfilesmodule.dtos.user.UserRegisterDto;
+import com.example.sharedfilesmodule.dtos.user.UserResponseDto;
 import com.ms.clientservice.dtos.ResponseDto;
 import com.ms.clientservice.dtos.UpdateDto;
-import com.ms.clientservice.dtos.UserResponseDto;
 import com.ms.clientservice.entities.UserEntity;
 import com.ms.clientservice.enums.Role;
 import com.ms.clientservice.exceptions.UserNotFoundException;
-import com.ms.clientservice.exceptions.EmailAlreadyExistsException;
 import com.ms.clientservice.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
@@ -34,7 +33,7 @@ public class UserService {
 
 
     @Transactional
-    public UserResponseDto registerUser(RegisterDto dto) {
+    public UserResponseDto registerUser(UserRegisterDto dto) {
         var client = new UserEntity();
         client.setUsername(dto.name());
         client.setEmail(dto.email());
@@ -76,8 +75,8 @@ public class UserService {
                 .toList();
     }
 
-    public UserResponseDto findByUsername(String username){
-         var user = userRepository.findByUsername(username)
+    public UserResponseDto findByEmail(String email){
+         var user = userRepository.findByEmail(email)
                  .orElseThrow(() -> new UserNotFoundException("User not found"));
          return modelMapper.map(user, UserResponseDto.class);
     }

@@ -23,7 +23,7 @@
         <module name="client-service" />
         <module name="user-service" />
       </profile>
-      <profile name="Annotation profile for delivery-person-service" enabled="true">
+      <profile name="Annotation profile for restaurant-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />

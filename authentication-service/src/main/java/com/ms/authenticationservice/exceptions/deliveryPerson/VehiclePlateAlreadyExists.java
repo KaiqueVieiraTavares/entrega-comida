@@ -1,4 +1,4 @@
-package com.example.deliverypersonservice.exceptions;
+package com.ms.authenticationservice.exceptions.deliveryPerson;
 
 public class VehiclePlateAlreadyExists extends RuntimeException {
     public VehiclePlateAlreadyExists() {

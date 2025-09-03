@@ -1,13 +1,10 @@
 package com.ms.clientservice.controllers;
 
 
-import com.ms.clientservice.dtos.RegisterDto;
 import com.ms.clientservice.dtos.ResponseDto;
 import com.ms.clientservice.dtos.UpdateDto;
-import com.ms.clientservice.dtos.UserResponseDto;
 import com.ms.clientservice.services.UserService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

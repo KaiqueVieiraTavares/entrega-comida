@@ -16,11 +16,4 @@ public class HandleControllerAdvice {
         problem.setTitle("Delivery person not found");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problem);
     }
-    @ExceptionHandler(VehiclePlateAlreadyExists.class)
-    public ResponseEntity<ProblemDetail> handleVehiclePlateAlreadyExists(VehiclePlateAlreadyExists e){
-        var problem = ProblemDetail.forStatus(HttpStatus.CONFLICT);
-        problem.setDetail(e.getMessage());
-        problem.setTitle("Delivery plate already exists!");
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(problem);
-    }
 }

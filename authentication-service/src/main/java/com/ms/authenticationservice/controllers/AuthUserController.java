@@ -1,10 +1,10 @@
 package com.ms.authenticationservice.controllers;
 
 
-import com.ms.authenticationservice.dtos.UserLoginDto;
-import com.ms.authenticationservice.dtos.UserRegisterDto;
-import com.ms.authenticationservice.dtos.UserResponseLoginDto;
-import com.ms.authenticationservice.services.AuthService;
+import com.example.sharedfilesmodule.dtos.user.UserRegisterDto;
+import com.ms.authenticationservice.dtos.user.UserLoginDto;
+import com.ms.authenticationservice.dtos.user.UserResponseLoginDto;
+import com.ms.authenticationservice.services.AuthUserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,21 +14,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/auth")
-public class AuthController {
-    private final AuthService authService;
+@RequestMapping("/auth/users")
+public class AuthUserController {
+    private final AuthUserService authService;
 
-    public AuthController(AuthService authService) {
+    public AuthUserController(AuthUserService authService) {
         this.authService = authService;
     }
     @PostMapping("/login")
     public ResponseEntity<UserResponseLoginDto> loginUser(@Valid @RequestBody UserLoginDto userLoginDto){
-        var result = authService.loginUserService(userLoginDto);
+        var result = authService.loginUser(userLoginDto);
         return ResponseEntity.ok(result);
     }
     @PostMapping("/register")
     public ResponseEntity<Void> registerUser(@Valid @RequestBody UserRegisterDto userRegisterDto){
-         authService.registerUserService(userRegisterDto);
+         authService.registerUser(userRegisterDto);
          return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

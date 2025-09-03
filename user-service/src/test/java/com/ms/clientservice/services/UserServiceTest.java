@@ -1,9 +1,9 @@
 package com.ms.clientservice.services;
 
-import com.ms.clientservice.dtos.RegisterDto;
+import com.example.sharedfilesmodule.dtos.user.UserRegisterDto;
+import com.example.sharedfilesmodule.dtos.user.UserResponseDto;
 import com.ms.clientservice.dtos.ResponseDto;
 import com.ms.clientservice.dtos.UpdateDto;
-import com.ms.clientservice.dtos.UserResponseDto;
 import com.ms.clientservice.entities.UserEntity;
 import com.ms.clientservice.enums.Role;
 import com.ms.clientservice.exceptions.UserNotFoundException;
@@ -48,14 +48,14 @@ class UserServiceTest {
     private final String cpf = "12345678900";
     private final Role role = Role.USER;
 
-    private RegisterDto expectedRegisterDto;
+    private UserRegisterDto expectedRegisterDto;
     private UserEntity expectedUserEntity;
     private UserResponseDto expectedUserResponseDto;
     private UpdateDto expectedUpdatedtoDto;
     private ResponseDto expectedResponseDto;
     @BeforeEach
     public void setup() {
-        expectedRegisterDto = new RegisterDto(username, email,cpf, password, phone);
+        expectedRegisterDto = new UserRegisterDto(username, email,cpf, password, phone);
         expectedUserEntity = new UserEntity(
                 UUID.randomUUID(),
                 username,
