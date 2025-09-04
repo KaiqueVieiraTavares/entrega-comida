@@ -1,7 +1,7 @@
 package com.example.deliverypersonservice.controllers;
 
 import com.example.deliverypersonservice.services.DeliveryPersonService;
-import com.example.sharedfilesmodule.dtos.deliveryperson.DeliveryPersonRequestDTO;
+import com.example.sharedfilesmodule.dtos.deliveryperson.DeliveryPersonRegisterDTO;
 import com.example.sharedfilesmodule.dtos.deliveryperson.DeliveryPersonResponseDto;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -34,7 +34,11 @@ public class DeliveryPersonController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
     @PutMapping("/{id}")
-    public ResponseEntity<DeliveryPersonResponseDto> updateDeliveryPerson(@PathVariable UUID id, @RequestBody @Valid DeliveryPersonRequestDTO deliveryPersonRequestDTO){
+    public ResponseEntity<DeliveryPersonResponseDto> updateDeliveryPerson(@PathVariable UUID id, @RequestBody @Valid DeliveryPersonRegisterDTO deliveryPersonRequestDTO){
         return ResponseEntity.ok(deliveryPersonService.updateDeliveryPerson(id, deliveryPersonRequestDTO));
+    }
+    @PostMapping()
+    public ResponseEntity<DeliveryPersonResponseDto> createDeliveryPerson(@RequestBody @Valid DeliveryPersonRegisterDTO deliveryPersonRegisterDTO){
+        return ResponseEntity.status(HttpStatus.CREATED).body(deliveryPersonService.createDeliveryPerson(deliveryPersonRegisterDTO));
     }
 }

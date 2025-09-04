@@ -1,8 +1,9 @@
 package com.example.deliverypersonservice.services;
 
+import com.example.deliverypersonservice.entities.DeliveryPersonEntity;
 import com.example.deliverypersonservice.exceptions.DeliveryPersonNotFound;
 import com.example.deliverypersonservice.repositories.DeliveryPersonRepository;
-import com.example.sharedfilesmodule.dtos.deliveryperson.DeliveryPersonRequestDTO;
+import com.example.sharedfilesmodule.dtos.deliveryperson.DeliveryPersonRegisterDTO;
 import com.example.sharedfilesmodule.dtos.deliveryperson.DeliveryPersonResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -21,6 +22,13 @@ public class DeliveryPersonService {
         this.deliveryPersonRepository = deliveryPersonRepository;
     }
 
+
+    public DeliveryPersonResponseDto createDeliveryPerson(DeliveryPersonRegisterDTO deliveryPersonRequestDTO){
+        var deliveryPersonEntity = modelMapper.map(deliveryPersonRequestDTO, DeliveryPersonEntity.class);
+        return modelMapper.map(deliveryPersonRepository.save(deliveryPersonEntity), DeliveryPersonResponseDto.class);
+    }
+
+
     public DeliveryPersonResponseDto getDeliveryPerson(UUID id){
         var deliveryPerson = deliveryPersonRepository.findById(id).orElseThrow(() -> {
             log.error("Delivery person with id: {} not found!" ,id);
@@ -32,7 +40,7 @@ public class DeliveryPersonService {
         return deliveryPersonRepository.findAll().stream().map(deliveryPersonEntity ->
                 modelMapper.map(deliveryPersonEntity, DeliveryPersonResponseDto.class)).toList();
     }
-    public DeliveryPersonResponseDto updateDeliveryPerson(UUID id, DeliveryPersonRequestDTO deliveryPersonRequestDTO){
+    public DeliveryPersonResponseDto updateDeliveryPerson(UUID id, DeliveryPersonRegisterDTO deliveryPersonRequestDTO){
        var deliveryPerson = deliveryPersonRepository.findById(id).orElseThrow(() -> {
            log.error("Delivery person with id: {} not found!" ,id);
            return new DeliveryPersonNotFound();

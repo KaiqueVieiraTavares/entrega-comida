@@ -1,6 +1,6 @@
 package com.ms.authenticationservice.controllers;
 
-import com.example.sharedfilesmodule.dtos.deliveryperson.DeliveryPersonRequestDTO;
+import com.example.sharedfilesmodule.dtos.deliveryperson.DeliveryPersonRegisterDTO;
 import com.ms.authenticationservice.dtos.deliveryPerson.DeliveryPersonLoginDto;
 import com.ms.authenticationservice.dtos.deliveryPerson.DeliverypersonResponseLoginDto;
 import com.ms.authenticationservice.services.AuthDeliveryPersonService;
@@ -17,7 +17,7 @@ public class AuthDeliverypersonController {
     public AuthDeliverypersonController(AuthDeliveryPersonService authDeliveryPersonService) {
         this.authDeliveryPersonService = authDeliveryPersonService;
     }
-    public ResponseEntity<Void> registerDeliveryPerson(DeliveryPersonRequestDTO deliveryPersonRequestDTO){
+    public ResponseEntity<Void> registerDeliveryPerson(DeliveryPersonRegisterDTO deliveryPersonRequestDTO){
         authDeliveryPersonService.registerDeliveryPerson(deliveryPersonRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

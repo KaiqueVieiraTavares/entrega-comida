@@ -22,6 +22,7 @@ public class DeliveryPersonEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String name;
+    private String password;
     private String email;
     private String cnh;
     @Pattern(regexp = "^[A-Z]{3}-\\d{4}$|^[A-Z]{3}\\d[A-Z]\\d{2}$" , message = "the plate must be in the form AAA-0000 or AAA0A00")

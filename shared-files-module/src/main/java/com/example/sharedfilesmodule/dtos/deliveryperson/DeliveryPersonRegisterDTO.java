@@ -3,7 +3,7 @@ package com.example.sharedfilesmodule.dtos.deliveryperson;
 import com.example.deliverypersonservice.enums.VehicleType;
 import jakarta.validation.constraints.*;
 
-public record DeliveryPersonRequestDTO(
+public record DeliveryPersonRegisterDTO(
 
         @NotBlank(message = "Name is required")
         String name,
@@ -11,6 +11,9 @@ public record DeliveryPersonRequestDTO(
         @NotBlank(message = "Email is required")
         @Email(message = "Email should be valid")
         String email,
+
+        @NotBlank(message = "password is required")
+        String password,
 
         @NotBlank(message = "CNH is required")
         @Size(min = 11, max = 11, message = "CNH must have 11 digits")

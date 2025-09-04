@@ -1,6 +1,6 @@
 package com.ms.authenticationservice.services;
 
-import com.example.sharedfilesmodule.dtos.deliveryperson.DeliveryPersonRequestDTO;
+import com.example.sharedfilesmodule.dtos.deliveryperson.DeliveryPersonRegisterDTO;
 
 import com.ms.authenticationservice.clients.DeliveryPersonServiceClient;
 import com.ms.authenticationservice.dtos.deliveryPerson.DeliveryPersonLoginDto;
@@ -22,14 +22,19 @@ public class AuthDeliveryPersonService {
         this.deliveryPersonServiceClient = deliveryPersonServiceClient;
         this.tokenService = tokenService;
     }
-    public void registerDeliveryPerson(DeliveryPersonRequestDTO deliveryPersonRequestDTO){
+    public void registerDeliveryPerson(DeliveryPersonRegisterDTO deliveryPersonRequestDTO){
+        var encodedPassword = passwordEncoder.encode(deliveryPersonRequestDTO.password());
         if(deliveryPersonServiceClient.existsByEmail(deliveryPersonRequestDTO.email())){
             throw new DeliveryPersonEmailAlreadyExistsException();
         }
         if(deliveryPersonServiceClient.existsByVehiclePlate(deliveryPersonRequestDTO.vehiclePlate())){
             throw new VehiclePlateAlreadyExists();
         }
-        deliveryPersonServiceClient.registerDeliveryPerson(deliveryPersonRequestDTO);
+        var deliveryPersonRequestSendDto = new DeliveryPersonRegisterDTO(deliveryPersonRequestDTO.name(),
+                deliveryPersonRequestDTO.email(),encodedPassword,deliveryPersonRequestDTO.cnh(),deliveryPersonRequestDTO.vehiclePlate(),
+                deliveryPersonRequestDTO.vehicleType());
+
+        deliveryPersonServiceClient.registerDeliveryPerson(deliveryPersonRequestSendDto);
     }
 
     public DeliverypersonResponseLoginDto loginDeliveryPerson(DeliveryPersonLoginDto deliveryPersonLoginDto){
