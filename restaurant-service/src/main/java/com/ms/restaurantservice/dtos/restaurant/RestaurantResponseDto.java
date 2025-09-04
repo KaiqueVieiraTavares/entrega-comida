@@ -1,9 +1,14 @@
-package com.ms.restaurantservice.dtos;
+package com.ms.restaurantservice.dtos.restaurant;
 
 import com.ms.restaurantservice.enums.Category;
 
-public record RestaurantUpdateDto(
+import java.util.UUID;
+
+public record RestaurantResponseDto(
+        UUID id,
         String name,
+        String email,
+        String cnpj,
         String phone,
         String address,
         String city,

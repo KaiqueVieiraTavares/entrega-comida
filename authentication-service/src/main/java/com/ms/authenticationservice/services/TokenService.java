@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.security.Key;
+import java.time.Instant;
 import java.util.Date;
 
 @Service
@@ -23,7 +24,7 @@ public class TokenService {
 
     public String generateToken(String username){
         return Jwts.builder().subject(username).issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+                .expiration(Date.from(Instant.now().plusMillis(1000 * 60 * 60 * 10 )))
                 .signWith(secretKey)
                 .compact();
     }

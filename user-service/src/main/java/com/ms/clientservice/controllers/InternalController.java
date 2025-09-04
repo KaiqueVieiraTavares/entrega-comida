@@ -1,6 +1,7 @@
 package com.ms.clientservice.controllers;
 
 import com.example.sharedfilesmodule.dtos.user.UserRegisterDto;
+import com.example.sharedfilesmodule.dtos.user.UserResponseDto;
 import com.ms.clientservice.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,5 +38,9 @@ private final UserService userService;
     @GetMapping("/{userId}/address")
     public String getAddress(@PathVariable UUID userId){
         return userService.getAddress(userId);
+    }
+    @GetMapping("/{userId}/exists")
+    public Boolean existsByUserId(@PathVariable("userId") UUID userId){
+        return userService.existsByUserId(userId);
     }
 }

@@ -84,4 +84,7 @@ public class UserService {
          var user  =userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"));
          return user.getAddress();
     }
+    public Boolean existsByUserId(UUID id){
+        return userRepository.existsById(id);
+    }
 }

@@ -51,6 +51,7 @@
       <module name="product-service" options="-parameters" />
       <module name="restaurant-service" options="-parameters" />
       <module name="shared-files-module" options="-parameters" />
+      <module name="user-service" options="-parameters" />
     </option>
   </component>
 </project>

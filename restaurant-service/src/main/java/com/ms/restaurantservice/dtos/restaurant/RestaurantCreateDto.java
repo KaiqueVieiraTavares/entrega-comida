@@ -1,4 +1,4 @@
-package com.ms.restaurantservice.dtos;
+package com.ms.restaurantservice.dtos.restaurant;
 
 
 import com.ms.restaurantservice.enums.Category;

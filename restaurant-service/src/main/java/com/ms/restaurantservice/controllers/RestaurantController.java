@@ -1,9 +1,9 @@
 package com.ms.restaurantservice.controllers;
 
 
-import com.ms.restaurantservice.dtos.RestaurantCreateDto;
-import com.ms.restaurantservice.dtos.RestaurantResponseDto;
-import com.ms.restaurantservice.dtos.RestaurantUpdateDto;
+import com.ms.restaurantservice.dtos.restaurant.RestaurantCreateDto;
+import com.ms.restaurantservice.dtos.restaurant.RestaurantResponseDto;
+import com.ms.restaurantservice.dtos.restaurant.RestaurantUpdateDto;
 import com.ms.restaurantservice.services.RestaurantService;
 
 
