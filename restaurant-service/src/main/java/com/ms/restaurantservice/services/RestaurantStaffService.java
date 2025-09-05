@@ -1,7 +1,6 @@
 package com.ms.restaurantservice.services;
 
 import com.ms.restaurantservice.client.UserServiceClient;
-import com.ms.restaurantservice.dtos.restaurantstaff.ExitStaffResponseDTO;
 import com.ms.restaurantservice.dtos.restaurantstaff.RestaurantStaffRequestDTO;
 import com.ms.restaurantservice.dtos.restaurantstaff.RestaurantStaffResponseDTO;
 import com.ms.restaurantservice.entities.RestaurantStaffEntity;
@@ -65,8 +64,7 @@ public class RestaurantStaffService {
         return modelMapper.map(saved, RestaurantStaffResponseDTO.class);
     }
     @Transactional
-    public ExitStaffResponseDTO exitFromRestaurant(UUID userId) {
-
+    public void exitFromRestaurant(UUID userId) {
 
         var staff = restaurantStaffRepository
                 .findByUserId(userId)
@@ -78,16 +76,34 @@ public class RestaurantStaffService {
 
         restaurantStaffRepository.delete(staff);
 
-        return new ExitStaffResponseDTO("You have successfully exited the restaurant");
     }
-    public List<RestaurantStaffResponseDTO> getAllStaffsFromRestaurant(UUID userId, UUID restaurantId){
-        var staff = restaurantStaffRepository
-                .findByUserId(userId)
-                .orElseThrow(() -> new IllegalArgumentException("You are not in any restaurant"));
-        if(!(staff.getRestaurantId().equals(restaurantId))){
+    public List<RestaurantStaffResponseDTO> getAllStaffFromRestaurant(UUID userId, UUID restaurantId) {
+
+        restaurantStaffRepository.findByUserIdAndRestaurantId(userId, restaurantId)
+                .orElseThrow(() -> new UnauthorizedAccessException());
+
+        return restaurantStaffRepository.findAllByRestaurantId(restaurantId).stream()
+                .map(staff -> modelMapper.map(staff, RestaurantStaffResponseDTO.class))
+                .toList();
+    }
+
+    public RestaurantStaffResponseDTO getStaffFromRestaurant(UUID userId, UUID staffId){
+        var requesterStaff = restaurantStaffRepository.findByUserId(userId).orElseThrow(() -> new IllegalArgumentException(""));
+        var staffUserTarget = restaurantStaffRepository.findByIdAndRestaurantId(staffId, requesterStaff.getRestaurantId()).orElseThrow(() ->
+                new IllegalArgumentException(""));
+        return modelMapper.map(staffUserTarget, RestaurantStaffResponseDTO.class);
+    }
+
+    public void removeStaffFromRestaurant(UUID userId, UUID staffId){
+        var requesterStaff = restaurantStaffRepository.findByUserId(userId).orElseThrow(() -> new IllegalArgumentException(""));
+        if(requesterStaff.getStaffRole()!=StaffRole.OWNER){
             throw new UnauthorizedAccessException();
         }
-        return restaurantStaffRepository.findAllByRestaurantId(restaurantId).stream().map(restaurantStaffEntity ->
-                modelMapper.map(restaurantStaffEntity, RestaurantStaffResponseDTO.class)).toList();
+        var staffUserTarget = restaurantStaffRepository.findByIdAndRestaurantId(staffId, requesterStaff.getRestaurantId()).orElseThrow(() ->
+                new IllegalArgumentException(""));
+        if(requesterStaff.equals(staffUserTarget)){
+            throw new IllegalArgumentException("");
+        }
+        restaurantStaffRepository.delete(staffUserTarget);
     }
 }

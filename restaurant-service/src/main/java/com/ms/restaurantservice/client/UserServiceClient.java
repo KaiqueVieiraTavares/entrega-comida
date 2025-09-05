@@ -12,4 +12,5 @@ public interface UserServiceClient {
 
     @GetMapping("/users/{userId}/exists")
     Boolean existsByUserId(@PathVariable("userId") UUID userId);
+
 }
