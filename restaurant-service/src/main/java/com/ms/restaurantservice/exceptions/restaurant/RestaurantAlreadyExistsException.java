@@ -1,4 +1,4 @@
-package com.ms.restaurantservice.exceptions;
+package com.ms.restaurantservice.exceptions.restaurant;
 
 public class RestaurantAlreadyExistsException extends RuntimeException {
     public RestaurantAlreadyExistsException(String message) {
