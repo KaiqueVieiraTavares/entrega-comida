@@ -1,4 +1,4 @@
-package com.ms.orderservice.messaging.producer;
+package com.ms.orderservice.messaging.producer.order_product;
 
 import com.ms.shared.dtos.stock.StockItemDto;
 import com.ms.shared.dtos.stock.StockUpdateMessage;

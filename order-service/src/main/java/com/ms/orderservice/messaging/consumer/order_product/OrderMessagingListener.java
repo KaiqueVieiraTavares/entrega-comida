@@ -1,4 +1,4 @@
-package com.ms.orderservice.messaging.consumer;
+package com.ms.orderservice.messaging.consumer.order_product;
 
 
 import com.example.sharedfilesmodule.enums.OrderStatus;

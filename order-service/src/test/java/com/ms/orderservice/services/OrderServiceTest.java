@@ -5,7 +5,7 @@ import com.ms.orderservice.entities.OrderEntity;
 import com.ms.orderservice.entities.OrderItemEntity;
 import com.ms.orderservice.exceptions.OrderNotFoundException;
 import com.ms.orderservice.exceptions.UnauthorizedAccessException;
-import com.ms.orderservice.messaging.producer.OrderMessagingProducer;
+import com.ms.orderservice.messaging.producer.order_product.OrderMessagingProducer;
 import com.ms.orderservice.repositories.OrderRepository;
 import com.ms.shared.dtos.stock.StockItemDto;
 import com.ms.shared.dtos.stock.StockValidationRequestDto;

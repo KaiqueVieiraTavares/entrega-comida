@@ -1,6 +1,5 @@
 package com.ms.orderservice.services;
 
-import com.example.sharedfilesmodule.dtos.OrderConfirmedDtoDelivery;
 import com.example.sharedfilesmodule.enums.OrderStatus;
 import com.ms.orderservice.dtos.*;
 
@@ -10,8 +9,8 @@ import com.ms.orderservice.exceptions.BusinessException;
 import com.ms.orderservice.exceptions.KafkaSendException;
 import com.ms.orderservice.exceptions.OrderNotFoundException;
 import com.ms.orderservice.exceptions.UnauthorizedAccessException;
-import com.ms.orderservice.messaging.producer.DeliveryMessagingProducer;
-import com.ms.orderservice.messaging.producer.OrderMessagingProducer;
+import com.ms.orderservice.messaging.producer.order_delivery.DeliveryMessagingProducer;
+import com.ms.orderservice.messaging.producer.order_product.OrderMessagingProducer;
 import com.ms.orderservice.repositories.OrderRepository;
 import com.ms.shared.dtos.stock.StockItemDto;
 import com.ms.shared.dtos.stock.StockValidationRequestDto;
@@ -147,7 +146,7 @@ public class OrderService {
             order.setStatus(OrderStatus.PAID);
             return modelMapper.map(orderRepository.save(order), OrderResponseDto.class);
         } catch (KafkaSendException e){
-            throw new BusinessException("Falha na sincronização. Tente novamente mais tarde.");
+            throw new BusinessException("sync failed, please try again later");
         }
     }
 }

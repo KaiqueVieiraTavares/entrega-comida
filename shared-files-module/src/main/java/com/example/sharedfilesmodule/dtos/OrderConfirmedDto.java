@@ -3,7 +3,7 @@ package com.example.sharedfilesmodule.dtos;
 import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 
-public record OrderConfirmedDtoDelivery(
+public record OrderConfirmedDto(
 
         @NotNull(message = "orderId cannot be null")
         UUID orderId,

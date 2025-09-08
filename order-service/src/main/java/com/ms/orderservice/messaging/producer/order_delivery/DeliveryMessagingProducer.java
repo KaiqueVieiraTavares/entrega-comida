@@ -1,7 +1,6 @@
-package com.ms.orderservice.messaging.producer;
+package com.ms.orderservice.messaging.producer.order_delivery;
 
-import com.example.sharedfilesmodule.dtos.OrderConfirmedDtoDelivery;
-import com.ms.orderservice.exceptions.KafkaSendException;
+import com.example.sharedfilesmodule.dtos.OrderConfirmedDto;
 import com.ms.orderservice.feignclient.RestaurantServiceClient;
 import com.ms.orderservice.feignclient.UserServiceClient;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +27,7 @@ public class DeliveryMessagingProducer {
     public void sendOrderConfirmed(UUID userId, UUID orderId, UUID restaurantId){
         String userAddress = userServiceClient.getAddress(userId);
         String restaurantAddress = restaurantServiceClient.getAddress(restaurantId);
-        var confirmedOrder = new OrderConfirmedDtoDelivery(orderId, restaurantId, userAddress, restaurantAddress);
+        var confirmedOrder = new OrderConfirmedDto(orderId, restaurantId, userAddress, restaurantAddress);
         var future = kafkaTemplate.send("order-confirmed", confirmedOrder);
 
         future.whenComplete((sendResult, ex) -> {
