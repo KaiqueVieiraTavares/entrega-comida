@@ -27,7 +27,7 @@ public class DeliveryMessagingProducer {
     public void sendOrderConfirmed(UUID userId, UUID orderId, UUID restaurantId){
         String userAddress = userServiceClient.getAddress(userId);
         String restaurantAddress = restaurantServiceClient.getAddress(restaurantId);
-        var confirmedOrder = new OrderConfirmedDto(orderId, restaurantId, userAddress, restaurantAddress);
+        var confirmedOrder = new OrderConfirmedDto(orderId, restaurantId,userId, userAddress, restaurantAddress);
         var future = kafkaTemplate.send("order-confirmed", confirmedOrder);
 
         future.whenComplete((sendResult, ex) -> {

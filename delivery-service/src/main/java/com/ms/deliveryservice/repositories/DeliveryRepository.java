@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -14,4 +15,6 @@ public interface DeliveryRepository extends JpaRepository<DeliveryEntity, UUID> 
 
     List<DeliveryEntity> findByStatus(DeliveryStatus status);
     List<DeliveryEntity> findByDeliveryPersonId(UUID deliveryPersonid);
+
+    Optional<DeliveryEntity> findByDeliveryPersonIdAndId(UUID deliveryPersonId, UUID id);
 }

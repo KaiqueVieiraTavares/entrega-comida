@@ -5,11 +5,13 @@ import java.util.UUID;
 
 public record OrderConfirmedDto(
 
-        @NotNull(message = "orderId cannot be null")
+        @NotNull(message = "order id cannot be null")
         UUID orderId,
 
-        @NotNull(message = "restaurantId cannot be null")
+        @NotNull(message = "restaurant id cannot be null")
         UUID restaurantId,
+        @NotNull(message = "user id cannot be null")
+        UUID userId,
         @NotNull(message = "user address cannot be null")
         String userAddress,
         @NotNull(message = "restaurant address cannot be null")

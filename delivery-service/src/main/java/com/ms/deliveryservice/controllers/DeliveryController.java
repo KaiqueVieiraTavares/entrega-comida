@@ -30,28 +30,21 @@ public class DeliveryController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<List<DeliveryResponseDTO>> getMeDeliveries(@RequestHeader("X-User-Id") String deliveryPersonId){
-     var response = deliveryService.getMeDeliveries(UUID.fromString(deliveryPersonId));
+    public ResponseEntity<List<DeliveryResponseDTO>> getMeDeliveries(@RequestHeader("X-User-Id") UUID deliveryPersonId){
+     var response = deliveryService.getMeDeliveries(deliveryPersonId);
      return ok(response);
     }
 
     @PostMapping("/{deliveryId}")
-    public ResponseEntity<DeliveryResponseDTO> assignDelivery(@RequestHeader("X-User-Id") String deliveryPersonId,
+    public ResponseEntity<DeliveryResponseDTO> assignDelivery(@RequestHeader("X-User-Id") UUID deliveryPersonId,
                                                               @PathVariable UUID deliveryId){
-        var response = deliveryService.assignDelivery(UUID.fromString(deliveryPersonId), deliveryId);
-        return ok(response);
-    }
-
-    @PutMapping("/{deliveryId}")
-    public ResponseEntity<DeliveryResponseDTO> updateDelivery(@PathVariable UUID deliveryId,
-                                                              @Valid @RequestBody UpdateDeliveryStatusDTO updateDeliveryStatusDTO){
-        var response = deliveryService.updateDelivery(deliveryId, updateDeliveryStatusDTO);
+        var response = deliveryService.assignDelivery(deliveryPersonId, deliveryId);
         return ok(response);
     }
 
     @DeleteMapping("/{deliveryId}")
-    public ResponseEntity<Void> cancelDelivery(@PathVariable UUID deliveryId){
-        deliveryService.cancelDelivery(deliveryId);
+    public ResponseEntity<Void> cancelDelivery(@RequestHeader("X-User-Id") UUID deliveryPersonId, @PathVariable UUID deliveryId){
+        deliveryService.cancelDelivery(deliveryPersonId, deliveryId);
         return status(HttpStatus.NO_CONTENT).build();
     }
 }

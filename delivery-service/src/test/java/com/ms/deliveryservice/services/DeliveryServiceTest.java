@@ -1,5 +1,7 @@
 package com.ms.deliveryservice.services;
 
+import com.example.sharedfilesmodule.dtos.OrderConfirmedDto;
+import com.example.sharedfilesmodule.enums.DeliveryStatus;
 import com.ms.deliveryservice.dtos.DeliveryRequestDTO;
 import com.ms.deliveryservice.dtos.DeliveryResponseDTO;
 import com.ms.deliveryservice.dtos.UpdateDeliveryStatusDTO;
@@ -7,8 +9,8 @@ import com.ms.deliveryservice.entities.DeliveryEntity;
 import com.ms.deliveryservice.exceptions.DeliveryAlreadyCompletedException;
 import com.ms.deliveryservice.exceptions.DeliveryNotFoundException;
 import com.ms.deliveryservice.repositories.DeliveryRepository;
-import com.ms.shared.enums.DeliveryStatus;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -34,28 +36,31 @@ class DeliveryServiceTest {
     private DeliveryService deliveryService;
 
     private final UUID deliveryId = UUID.randomUUID();
+    private final UUID userId = UUID.randomUUID();
     private final UUID orderId = UUID.randomUUID();
     private final UUID restaurantId = UUID.randomUUID();
     private final UUID deliveryPersonId = UUID.randomUUID();
-    private final String deliveryAddress = "Rua das Flores, 123";
+    private final String restaurantAddress = "Rua das Flores, 123";
+    private final String userAddress = "Rua da pista 123";
     private final LocalDateTime createdAt = LocalDateTime.now();
     private final LocalDateTime updatedAt = LocalDateTime.now();
     private final DeliveryStatus status = DeliveryStatus.WAITING_ASSIGNMENT;
 
-    private DeliveryRequestDTO deliveryRequestDTO;
+    private OrderConfirmedDto orderConfirmedDto;
     private DeliveryResponseDTO deliveryResponseDTO;
     private DeliveryEntity deliveryEntity;
     private UpdateDeliveryStatusDTO updateDeliveryStatusDTO;
 
     @BeforeEach
     void setUp() {
-        deliveryRequestDTO = new DeliveryRequestDTO(orderId, restaurantId, deliveryAddress);
+        orderConfirmedDto = new OrderConfirmedDto(orderId,restaurantId,userId,userAddress, restaurantAddress);
         deliveryEntity = new DeliveryEntity(
                 deliveryId,
                 orderId,
                 restaurantId,
+                userId,
                 deliveryPersonId,
-                deliveryAddress,
+                restaurantAddress,
                 status,
                 createdAt,
                 updatedAt
@@ -65,23 +70,23 @@ class DeliveryServiceTest {
                 orderId,
                 restaurantId,
                 deliveryPersonId,
-                deliveryAddress,
+                restaurantAddress,
                 status,
                 createdAt,
                 updatedAt
         );
-        updateDeliveryStatusDTO = new UpdateDeliveryStatusDTO(DeliveryStatus.IN_TRANSIT);
+        updateDeliveryStatusDTO = new UpdateDeliveryStatusDTO(DeliveryStatus.ASSIGNED);
     }
 
 
     @Test
     void createDelivery() {
-        when(modelMapper.map(deliveryRequestDTO, DeliveryEntity.class)).thenReturn(deliveryEntity);
+        when(modelMapper.map(orderConfirmedDto, DeliveryEntity.class)).thenReturn(deliveryEntity);
         when(deliveryRepository.save(deliveryEntity)).thenReturn(deliveryEntity);
 
-        deliveryService.createDelivery(deliveryRequestDTO);
+        deliveryService.createDelivery(orderConfirmedDto);
 
-        verify(modelMapper,times(1)).map(deliveryRequestDTO, DeliveryEntity.class);
+        verify(modelMapper,times(1)).map(orderConfirmedDto, DeliveryEntity.class);
         verify(deliveryRepository,times(1)).save(deliveryEntity);
     }
 
@@ -160,48 +165,10 @@ class DeliveryServiceTest {
         verify(deliveryRepository, never()).save(any());
     }
     @Test
-    void updateDelivery() {
-        when(deliveryRepository.findById(any(UUID.class))).thenReturn(Optional.of(deliveryEntity));
-        when(deliveryRepository.save(deliveryEntity)).thenReturn(deliveryEntity);
-        when(modelMapper.map(any(DeliveryEntity.class), eq(DeliveryResponseDTO.class)))
-                .thenAnswer(invocation -> {
-                    DeliveryEntity entity = invocation.getArgument(0);
-                    return new DeliveryResponseDTO(
-                            entity.getId(),
-                            entity.getOrderId(),
-                            entity.getRestaurantId(),
-                            entity.getDeliveryPersonId(),
-                            entity.getDeliveryAddress(),
-                            entity.getStatus(),
-                            entity.getCreatedAt(),
-                            entity.getUpdatedAt()
-                    );
-                });
-
-        var response = deliveryService.updateDelivery(deliveryId, updateDeliveryStatusDTO);
-
-        assertNotNull(response);
-        assertEquals(DeliveryStatus.IN_TRANSIT, response.status());
-        verify(deliveryRepository,times(1)).findById(any(UUID.class));
-        verify(deliveryRepository,times(1)).save(deliveryEntity);
-        verify(modelMapper,times(1)).map(deliveryEntity, DeliveryResponseDTO.class);
-    }
-
-    @Test
-    void updateDelivery_shouldThrownAnExceptionWhenDeliveryNotFound(){
-        when(deliveryRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
-
-        var exception = assertThrows(DeliveryNotFoundException.class, () -> deliveryService.updateDelivery(deliveryId, updateDeliveryStatusDTO));
-
-        assertEquals("Delivery not found", exception.getMessage());
-        verify(deliveryRepository,never()).save(any());
-        verify(modelMapper,never()).map(any(), any());
-    }
-    @Test
     void cancelDelivery() {
-        when(deliveryRepository.findById(any(UUID.class))).thenReturn(Optional.of(deliveryEntity));
+        when(deliveryRepository.findByDeliveryPersonIdAndId(any(UUID.class), any(UUID.class))).thenReturn(Optional.of(deliveryEntity));
 
-        deliveryService.cancelDelivery(deliveryId);
+        deliveryService.cancelDelivery(deliveryPersonId, deliveryId);
 
         assertEquals(DeliveryStatus.FAILED, deliveryEntity.getStatus());
     }
@@ -210,14 +177,14 @@ class DeliveryServiceTest {
     void cancelDelivery_shouldThrownAnExceptionWhenDeliveryNotFound(){
         when(deliveryRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
 
-        var exception = assertThrows(DeliveryNotFoundException.class, () -> deliveryService.cancelDelivery(deliveryId));
+        var exception = assertThrows(DeliveryNotFoundException.class, () -> deliveryService.cancelDelivery(deliveryPersonId, deliveryId));
         assertEquals("Delivery not found", exception.getMessage());
     }
     @Test
     void cancelDelivery_shouldThrownAnDeliveryAlreadyCompletedException(){
         deliveryEntity.setStatus(DeliveryStatus.DELIVERED);
         when(deliveryRepository.findById(any(UUID.class))).thenReturn(Optional.of(deliveryEntity));
-        var exception = assertThrows(DeliveryAlreadyCompletedException.class, () -> deliveryService.cancelDelivery(deliveryId));
+        var exception = assertThrows(DeliveryAlreadyCompletedException.class, () -> deliveryService.cancelDelivery(deliveryPersonId, deliveryId));
 
         assertEquals("Cannot cancel a delivered delivery", exception.getMessage());
     }

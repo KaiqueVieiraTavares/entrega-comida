@@ -24,7 +24,7 @@ public class DeliveryEntity {
     private UUID orderId;
 
     private UUID restaurantId;
-
+    private UUID userId;
     private UUID deliveryPersonId;
 
     private String deliveryAddress;

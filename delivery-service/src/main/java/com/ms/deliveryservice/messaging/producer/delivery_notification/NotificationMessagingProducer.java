@@ -1,10 +1,13 @@
 package com.ms.deliveryservice.messaging.producer.delivery_notification;
 
 import com.example.sharedfilesmodule.dtos.notification.OrderNotificationDto;
+import com.example.sharedfilesmodule.enums.DeliveryStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
