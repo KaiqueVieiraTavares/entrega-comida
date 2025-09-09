@@ -1,24 +1,22 @@
 package com.ms.deliveryservice.messaging.producer.delivery_notification;
 
 import com.example.sharedfilesmodule.dtos.notification.OrderNotificationDto;
-import com.example.sharedfilesmodule.enums.DeliveryStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
+
 import java.util.UUID;
 
 @Slf4j
 @Service
 public class NotificationMessagingProducer {
 
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final KafkaTemplate<String, OrderNotificationDto> kafkaTemplate;
     private static final String ORDER_ON_ROUTE_TOPIC = "order-on-route-notification";
     private static final String ORDER_CANCELED_TOPIC = "order-canceled-notification";
     private static final String ORDER_ARRIVED_TOPIC = "order-arrived-notification";
-    public NotificationMessagingProducer(KafkaTemplate<String, Object> kafkaTemplate) {
+    public NotificationMessagingProducer(KafkaTemplate<String, OrderNotificationDto> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
     public void sendMessageWhenOrderIsOnRoute(UUID userId){

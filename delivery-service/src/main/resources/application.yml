@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: "delivery-service"
+  kafka:
+    bootstrap-servers: "localhost:9092"
+    consumer:
+      group-id: "delivery-service"
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "com.example.sharedfilesmodule.dtos.notification"
+        spring.json.value.default.type: "com.example.sharedfilesmodule.dtos.notification.OrderNotificationDto"

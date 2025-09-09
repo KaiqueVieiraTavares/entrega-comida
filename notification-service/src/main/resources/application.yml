@@ -1,16 +1,12 @@
 spring:
   application:
     name: notification-service
-  rabbitmq:
-    host: localhost
-    port: 5672
-    stream:
-      username: guest
-      password: guest
   kafka:
     bootstrap-servers: localhost:9092
     consumer:
       group-id: notification-service
-      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
-        spring.json.trusted.packages: "*"
+        spring.json.trusted.packages: com.example.sharedfilesmodule.dtos.notification
+        spring.json.value.default.type: com.example.sharedfilesmodule.dtos.notification.OrderNotificationDto

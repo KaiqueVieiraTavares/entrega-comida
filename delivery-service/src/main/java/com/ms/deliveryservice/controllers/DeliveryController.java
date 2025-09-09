@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static org.springframework.http.ResponseEntity.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -26,25 +25,30 @@ public class DeliveryController {
     @GetMapping("")
     public ResponseEntity<List<DeliveryResponseDTO>> getAvailableDeliveries(){
         var response = deliveryService.getAvailableDeliveries();
-        return ok(response);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/me")
     public ResponseEntity<List<DeliveryResponseDTO>> getMeDeliveries(@RequestHeader("X-User-Id") UUID deliveryPersonId){
      var response = deliveryService.getMeDeliveries(deliveryPersonId);
-     return ok(response);
+     return ResponseEntity.ok(response);
     }
 
     @PostMapping("/{deliveryId}")
     public ResponseEntity<DeliveryResponseDTO> assignDelivery(@RequestHeader("X-User-Id") UUID deliveryPersonId,
                                                               @PathVariable UUID deliveryId){
         var response = deliveryService.assignDelivery(deliveryPersonId, deliveryId);
-        return ok(response);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{deliveryId}")
     public ResponseEntity<Void> cancelDelivery(@RequestHeader("X-User-Id") UUID deliveryPersonId, @PathVariable UUID deliveryId){
         deliveryService.cancelDelivery(deliveryPersonId, deliveryId);
-        return status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+    @PatchMapping("/{deliveryId}/arrived")
+    public ResponseEntity<DeliveryResponseDTO> orderArrived(@RequestHeader("X-User-Id") UUID deliveryPersonId, @PathVariable UUID deliveryId){
+        var response = deliveryService.orderArrived(deliveryPersonId, deliveryId);
+        return ResponseEntity.ok(response);
     }
 }
