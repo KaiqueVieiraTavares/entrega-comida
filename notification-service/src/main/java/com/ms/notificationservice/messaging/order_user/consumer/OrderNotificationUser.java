@@ -19,7 +19,6 @@ public class OrderNotificationUser {
     public void sendNotificationToUserWhenOrderConfirmed(OrderNotificationDto message) {
 
             String userId =  message.id().toString();
-            String path = "/queue/notifications";
             String payload = message.message();
             sendNotificationToUser(userId,payload);
 

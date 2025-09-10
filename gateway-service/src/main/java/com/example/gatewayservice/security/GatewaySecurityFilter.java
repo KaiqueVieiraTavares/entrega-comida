@@ -17,6 +17,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import javax.crypto.SecretKey;
+import java.util.ArrayList;
 import java.util.List;
 @Component
 public class GatewaySecurityFilter implements GatewayFilter {
@@ -31,7 +32,13 @@ public class GatewaySecurityFilter implements GatewayFilter {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
         ServerHttpResponse response = exchange.getResponse();
-
+        List<String> permittedRoutes =List.of("");
+        String path = request.getURI().getPath();
+        for(String routes: permittedRoutes){
+            if(path.equals(routes)){
+                return chain.filter(exchange);
+            }
+        }
         List<String> authHeaders = request.getHeaders().get("Authorization");
 
         if (authHeaders == null || authHeaders.isEmpty() || !authHeaders.get(0).startsWith("Bearer ")) {
