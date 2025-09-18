@@ -18,24 +18,26 @@ import java.util.UUID;
 public class DeliveryEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
+    @Column(name = "order_id")
     private UUID orderId;
-
+    @Column(name = "restaurant_id")
     private UUID restaurantId;
+    @Column(name = "user_id")
     private UUID userId;
+    @Column(name = "delivery_person_id")
     private UUID deliveryPersonId;
-
+    @Column(name = "delivery_address")
     private String deliveryAddress;
 
     @Enumerated(EnumType.STRING)
     private DeliveryStatus status;
 
-
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
 

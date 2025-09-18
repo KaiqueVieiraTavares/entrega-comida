@@ -1,11 +1,7 @@
 package com.ms.restaurantservice.entities;
 
-
 import com.ms.restaurantservice.enums.Category;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,30 +15,53 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class RestaurantEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id")
     private UUID id;
+
     @Column(name = "owner_id")
     private UUID ownerId;
+
+    @Column(name = "name")
     private String name;
-    @Email
-    @Column(unique = true, nullable = false)
+
+    @Column(name = "email", unique = true, nullable = false)
     private String email;
+
+    @Column(name = "password")
     private String password;
-    @Column(unique = true, nullable = false)
+
+    @Column(name = "cnpj", unique = true, nullable = false)
     private String cnpj;
-    @Pattern(regexp = "\\d{11}", message = "the number must have 11 digits ")
+
+    @Column(name = "phone")
     private String phone;
+
+    @Column(name = "address")
     private String address;
+
+    @Column(name = "city")
     private String city;
+
+    @Column(name = "state")
     private String state;
+
+    @Column(name = "cep")
     private String cep;
-    @Size(min = 20, max = 400)
+
+    @Column(name = "description")
     private String description;
+
     @Enumerated(EnumType.STRING)
+    @Column(name = "category")
     private Category category;
+
     @Builder.Default
+    @Column(name = "rating")
     private Double rating = 5.0;
+
     @Builder.Default
     @Column(name = "rating_count")
     private Integer ratingCount = 0;

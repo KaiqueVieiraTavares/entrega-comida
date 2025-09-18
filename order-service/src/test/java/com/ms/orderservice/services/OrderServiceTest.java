@@ -1,5 +1,6 @@
 package com.ms.orderservice.services;
 
+import com.example.sharedfilesmodule.enums.OrderStatus;
 import com.ms.orderservice.dtos.*;
 import com.ms.orderservice.entities.OrderEntity;
 import com.ms.orderservice.entities.OrderItemEntity;
@@ -9,7 +10,6 @@ import com.ms.orderservice.messaging.producer.order_product.OrderMessagingProduc
 import com.ms.orderservice.repositories.OrderRepository;
 import com.ms.shared.dtos.stock.StockItemDto;
 import com.ms.shared.dtos.stock.StockValidationRequestDto;
-import com.ms.shared.enums.OrderStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

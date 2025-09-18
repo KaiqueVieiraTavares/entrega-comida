@@ -49,11 +49,25 @@ class RestaurantServiceTest {
     private RestaurantResponseDto restaurantResponseDto;
     private RestaurantUpdateDto restaurantUpdateDto;
     private RestaurantEntity restaurantEntity;
+
     @BeforeEach
-    void setup(){
-        restaurantEntity = new RestaurantEntity(
-                id, ownerId, name,email,password,cnpj,phone,address,city,state,cep,description,category
-        );
+    void setup() {
+        restaurantEntity = RestaurantEntity.builder()
+                .id(id)
+                .ownerId(ownerId)
+                .name(name)
+                .email(email)
+                .password(password)
+                .cnpj(cnpj)
+                .phone(phone)
+                .address(address)
+                .city(city)
+                .state(state)
+                .cep(cep)
+                .description(description)
+                .category(category)
+                .build();
+
         restaurantCreateDto = new RestaurantCreateDto(
                 name,
                 email,

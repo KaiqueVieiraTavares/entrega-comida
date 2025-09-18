@@ -1,7 +1,6 @@
 package com.ms.deliveryservice.messaging.listener;
 
 import com.example.sharedfilesmodule.dtos.OrderConfirmedDto;
-import com.ms.deliveryservice.dtos.DeliveryRequestDTO;
 import com.ms.deliveryservice.services.DeliveryService;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;

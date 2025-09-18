@@ -1,6 +1,7 @@
 package com.ms.orderservice.dtos;
 
-import com.ms.shared.enums.OrderStatus;
+
+import com.example.sharedfilesmodule.enums.OrderStatus;
 
 import java.math.BigDecimal;
 import java.util.List;

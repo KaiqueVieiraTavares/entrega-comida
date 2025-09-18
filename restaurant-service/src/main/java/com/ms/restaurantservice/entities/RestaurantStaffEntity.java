@@ -18,11 +18,11 @@ public class RestaurantStaffEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    @Column(name = "restaurant_id", nullable = false)
+    @Column(name = "restaurant_id")
     private UUID restaurantId;
-    @Column(name = "user_id", nullable = false)
+    @Column(name = "user_id")
     private UUID userId;
-    @Column(name = "staff_role", nullable = false)
+    @Column(name = "staff_role")
     @Enumerated(EnumType.STRING)
     private StaffRole staffRole;
 }
