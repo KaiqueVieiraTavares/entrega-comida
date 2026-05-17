@@ -1,4 +1,4 @@
-package com.ms.clientservice.enums;
+package com.example.sharedfilesmodule.enums;
 
 public enum Role {
     USER,

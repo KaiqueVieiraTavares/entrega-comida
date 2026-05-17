@@ -42,7 +42,7 @@ public class AuthDeliveryPersonService {
         if(!(passwordEncoder.matches(deliveryPersonLoginDto.password(), savedDeliveryPerson.hashPassword()))){
             throw new BadCredentialsException("invalid password");
         }
-        var token = tokenService.generateToken(savedDeliveryPerson.email());
+        var token = tokenService.generateToken(savedDeliveryPerson.email(), savedDeliveryPerson);
         return new DeliverypersonResponseLoginDto(savedDeliveryPerson.email(), token);
     }
 

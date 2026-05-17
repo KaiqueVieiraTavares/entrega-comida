@@ -4,10 +4,10 @@ package com.ms.clientservice.services;
 
 import com.example.sharedfilesmodule.dtos.user.UserRegisterDto;
 import com.example.sharedfilesmodule.dtos.user.UserResponseDto;
+import com.example.sharedfilesmodule.enums.Role;
 import com.ms.clientservice.dtos.ResponseDto;
 import com.ms.clientservice.dtos.UpdateDto;
 import com.ms.clientservice.entities.UserEntity;
-import com.ms.clientservice.enums.Role;
 import com.ms.clientservice.exceptions.UserNotFoundException;
 import com.ms.clientservice.repositories.UserRepository;
 import jakarta.transaction.Transactional;

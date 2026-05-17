@@ -5,7 +5,6 @@ import com.example.sharedfilesmodule.dtos.user.UserResponseDto;
 import com.ms.clientservice.dtos.ResponseDto;
 import com.ms.clientservice.dtos.UpdateDto;
 import com.ms.clientservice.entities.UserEntity;
-import com.ms.clientservice.enums.Role;
 import com.ms.clientservice.exceptions.UserNotFoundException;
 import com.ms.clientservice.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;

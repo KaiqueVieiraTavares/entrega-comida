@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.time.Instant;
+
 @RestControllerAdvice(assignableTypes= RestaurantStaffController.class)
 public class RestaurantStaffHandleControllerAdvice {
 
@@ -30,11 +32,14 @@ public class RestaurantStaffHandleControllerAdvice {
     public ResponseEntity<ProblemDetail> handleSelfRemovalNotAllowed(SelfRemovalNotAllowedException e){
         return buildProblem(HttpStatus.BAD_REQUEST,"Self removal not allowed", e.getMessage());
     }
-
+    @ExceptionHandler(CannotRemoveRestaurantOwnerException.class)
+    public ResponseEntity<ProblemDetail> handleCannotRemoveRestaurantOwner(CannotRemoveRestaurantOwnerException e){
+        return buildProblem(HttpStatus.BAD_REQUEST, "cannot remove restaurant owner", e.getMessage());
+    }
     private ResponseEntity<ProblemDetail> buildProblem(HttpStatus status, String title, String detail){
-        var problem = ProblemDetail.forStatus(status);
+        var problem = ProblemDetail.forStatusAndDetail(status, detail);
         problem.setTitle(title);
-        problem.setDetail(detail);
+        problem.setProperty("timestamp", Instant.now());
         return ResponseEntity.status(status).body(problem);
     }
 }

@@ -1,8 +1,11 @@
 package com.ms.orderservice.services;
 
+import com.example.sharedfilesmodule.dtos.StockItemDto;
+import com.example.sharedfilesmodule.dtos.StockValidationRequestDto;
 import com.example.sharedfilesmodule.enums.OrderStatus;
-import com.ms.orderservice.dtos.*;
-
+import com.ms.orderservice.dtos.CreateOrderResponseDto;
+import com.ms.orderservice.dtos.OrderRequestDto;
+import com.ms.orderservice.dtos.OrderResponseDto;
 import com.ms.orderservice.entities.OrderEntity;
 import com.ms.orderservice.entities.OrderItemEntity;
 import com.ms.orderservice.exceptions.BusinessException;
@@ -12,15 +15,13 @@ import com.ms.orderservice.exceptions.UnauthorizedAccessException;
 import com.ms.orderservice.messaging.producer.order_delivery.DeliveryMessagingProducer;
 import com.ms.orderservice.messaging.producer.order_product.OrderMessagingProducer;
 import com.ms.orderservice.repositories.OrderRepository;
-import com.ms.shared.dtos.stock.StockItemDto;
-import com.ms.shared.dtos.stock.StockValidationRequestDto;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.UUID;
 
 
 @Slf4j

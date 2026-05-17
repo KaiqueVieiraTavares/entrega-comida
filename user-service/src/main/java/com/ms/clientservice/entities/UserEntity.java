@@ -1,6 +1,6 @@
 package com.ms.clientservice.entities;
 
-import com.ms.clientservice.enums.Role;
+import com.example.sharedfilesmodule.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -19,12 +19,12 @@ public class RestaurantStaffController {
         this.restaurantStaffService = restaurantStaffService;
     }
 
-    @GetMapping("/{staffId}")
+    @GetMapping("/restaurant/{restaurantId}/{staffId}")
     public ResponseEntity<RestaurantStaffResponseDTO> getStaffFromRestaurant(
             @RequestHeader("X-User-Id") UUID userId,
-            @PathVariable UUID staffId) {
+            @PathVariable UUID staffId, @PathVariable UUID restaurantId) {
 
-        var response = restaurantStaffService.getStaffFromRestaurant(userId, staffId);
+        var response = restaurantStaffService.getStaffFromRestaurant(userId, staffId, restaurantId);
         return ResponseEntity.ok(response);
     }
 
@@ -37,23 +37,23 @@ public class RestaurantStaffController {
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/me")
-    public ResponseEntity<Void> exitFromRestaurant(@RequestHeader("X-User-Id") UUID userId) {
-        restaurantStaffService.exitFromRestaurant(userId);
+    @DeleteMapping("/me/restaurant/{restaurantId}")
+    public ResponseEntity<Void> exitFromRestaurant(@RequestHeader("X-User-Id") UUID userId, @PathVariable UUID restaurantId) {
+        restaurantStaffService.exitFromRestaurant(userId, restaurantId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @DeleteMapping("/{staffId}")
+    @DeleteMapping("/restaurant/{restaurantId}/{staffId}")
     public ResponseEntity<Void> deleteStaffFromRestaurant(
             @RequestHeader("X-User-Id") UUID userId,
-            @PathVariable UUID staffId) {
+            @PathVariable UUID staffId, @PathVariable UUID restaurantId) {
 
-        restaurantStaffService.removeStaffFromRestaurant(userId, staffId);
+        restaurantStaffService.removeStaffFromRestaurant(userId, staffId, restaurantId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PostMapping("/restaurants/{restaurantId}")
-    public ResponseEntity<RestaurantStaffResponseDTO> addStaffFromRestaurant(
+    public ResponseEntity<RestaurantStaffResponseDTO> addStaffToRestaurant(
             @RequestHeader("X-User-Id") UUID ownerId,
             @PathVariable UUID restaurantId,
             @RequestBody RestaurantStaffRequestDTO restaurantStaffRequestDTO) {
