@@ -85,10 +85,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.ms</groupId>
-            <artifactId>shared-files</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
+            <groupId>com.example</groupId>
+            <artifactId>shared-files-module</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>

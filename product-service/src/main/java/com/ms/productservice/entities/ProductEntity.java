@@ -13,7 +13,9 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "products")
+@Table(name = "products", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"name", "restaurantId"})
+})
 public class ProductEntity {
 
     @Id
@@ -24,7 +26,7 @@ public class ProductEntity {
     @Column(name = "restaurant_id")
     private UUID restaurantId;
 
-    @Column(name = "name", unique = true)
+    @Column(name = "name")
     private String name;
 
     @Column(name = "description")

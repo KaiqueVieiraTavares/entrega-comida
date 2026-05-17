@@ -58,12 +58,14 @@ public class GatewaySecurityFilter implements GatewayFilter {
 
             String userId = claims.get("userId", String.class);
             String role = claims.get("role", String.class);
-
-            ServerHttpRequest mutatedRequest = request.mutate()
+            String restaurantId = claims.get("restaurantId", String.class);
+            ServerHttpRequest.Builder requestBuilder = request.mutate()
                     .header("X-User-Id", userId != null ? userId : "")
-                    .header("X-User-Role", role != null ? role : "")
-                    .build();
-
+                    .header("X-User-Role", role != null ? role : "");
+            if (restaurantId != null) {
+                requestBuilder.header("X-Restaurant-Id", restaurantId);
+            }
+            ServerHttpRequest mutatedRequest = requestBuilder.build();
             return chain.filter(exchange.mutate().request(mutatedRequest).build());
 
         } catch (Exception e) {

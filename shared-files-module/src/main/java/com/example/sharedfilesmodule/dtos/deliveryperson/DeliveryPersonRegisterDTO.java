@@ -1,6 +1,7 @@
 package com.example.sharedfilesmodule.dtos.deliveryperson;
 
-import com.example.deliverypersonservice.enums.VehicleType;
+
+import com.example.sharedfilesmodule.enums.VehicleType;
 import jakarta.validation.constraints.*;
 
 public record DeliveryPersonRegisterDTO(
