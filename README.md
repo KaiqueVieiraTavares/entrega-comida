@@ -1,4 +1,4 @@
-# 🍔 Food Delivery System - Microservices
+#  Food Delivery System - Microservices
 
 Um sistema de entrega de comida desenvolvido com **arquitetura de microsserviços** utilizando **Spring Boot** e diversas tecnologias do ecossistema Cloud.  
 
@@ -48,7 +48,7 @@ O sistema segue uma arquitetura de microsserviços, composta por:
 
 ---
 
-## 🔑 Autenticação
+##  Autenticação
 
 - Login e registro via **JWT**.
 - Integração com **OAuth2 (Google)**.
