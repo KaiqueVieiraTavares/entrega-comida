@@ -4,7 +4,7 @@ Um sistema de entrega de comida desenvolvido com **arquitetura de microsserviço
 
 ---
 
-## 🚀 Tecnologias utilizadas
+##  Tecnologias utilizadas
 
 - **Java 21**
 - **Spring Boot**
