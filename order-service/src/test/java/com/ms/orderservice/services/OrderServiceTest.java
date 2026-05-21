@@ -1,5 +1,7 @@
 package com.ms.orderservice.services;
 
+import com.example.sharedfilesmodule.dtos.StockItemDto;
+import com.example.sharedfilesmodule.dtos.StockValidationRequestDto;
 import com.example.sharedfilesmodule.enums.OrderStatus;
 import com.ms.orderservice.dtos.*;
 import com.ms.orderservice.entities.OrderEntity;
@@ -8,8 +10,6 @@ import com.ms.orderservice.exceptions.OrderNotFoundException;
 import com.ms.orderservice.exceptions.UnauthorizedAccessException;
 import com.ms.orderservice.messaging.producer.order_product.OrderMessagingProducer;
 import com.ms.orderservice.repositories.OrderRepository;
-import com.ms.shared.dtos.stock.StockItemDto;
-import com.ms.shared.dtos.stock.StockValidationRequestDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

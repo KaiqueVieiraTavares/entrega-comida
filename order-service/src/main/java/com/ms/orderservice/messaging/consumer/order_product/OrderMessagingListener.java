@@ -1,10 +1,10 @@
 package com.ms.orderservice.messaging.consumer.order_product;
 
 
+import com.example.sharedfilesmodule.dtos.StockValidationResponseDto;
 import com.example.sharedfilesmodule.enums.OrderStatus;
 import com.ms.orderservice.entities.OrderEntity;
 import com.ms.orderservice.repositories.OrderRepository;
-import com.ms.shared.dtos.stock.StockValidationResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -20,7 +20,7 @@ public class OrderMessagingListener {
         this.orderRepository = orderRepository;
     }
 
-    @KafkaListener(topics = "stock-valid-topic", groupId = "order-service")
+    @KafkaListener(topics = "order.stock-validation-result", groupId = "order-service")
     public void handleStockIsValid(StockValidationResponseDto stockValidationResponseDto){
         Optional<OrderEntity> orderEntity = orderRepository.findById(stockValidationResponseDto.orderId());
         if(orderEntity.isPresent()){
