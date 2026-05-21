@@ -2,34 +2,38 @@ package com.ms.productservice.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.time.Instant;
 
 @RestControllerAdvice
 public class HandleControllerAdvice {
 
     @ExceptionHandler(ProductAlreadyExistsException.class)
-    public ResponseEntity<ProblemDetail> handleProductAlreadyExistsException(ProductAlreadyExistsException e){
-        var problem = ProblemDetail.forStatus(HttpStatus.CONFLICT);
-        problem.setTitle("Product already exists");
-        problem.setDetail(e.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(problem);
+    public ProblemDetail handleProductAlreadyExistsException(ProductAlreadyExistsException e){
+        return buildProblem("Product already exists", e.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(ProductNotFoundException.class)
-    public ResponseEntity<ProblemDetail> handlerProductNotFoundException(ProductNotFoundException e){
-        var problem = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
-        problem.setTitle("Product not found");
-        problem.setDetail(e.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problem);
+    public ProblemDetail handlerProductNotFoundException(ProductNotFoundException e){
+
+        return buildProblem("Product not found", e.getMessage(), HttpStatus.NOT_FOUND);
+
     }
 
     @ExceptionHandler(UnauthorizedAccessException.class)
-    public ResponseEntity<ProblemDetail> handleUnauthorizedAccessException(UnauthorizedAccessException e){
-        var problem = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
-        problem.setTitle("not Authorized to this content");
-        problem.setDetail(e.getMessage());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(problem);
+    public ProblemDetail handleUnauthorizedAccessException(UnauthorizedAccessException e){
+        return buildProblem("not Authorized to this content", e.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+    @ExceptionHandler(InsufficientStockException.class)
+    public ProblemDetail handleInsufficientStock(InsufficientStockException e){
+        return buildProblem("Insufficient stock!", e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+    private ProblemDetail buildProblem(String title, String message, HttpStatus httpStatus){
+        var problem = ProblemDetail.forStatusAndDetail(httpStatus, message);
+        problem.setTitle(title);
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
     }
 }

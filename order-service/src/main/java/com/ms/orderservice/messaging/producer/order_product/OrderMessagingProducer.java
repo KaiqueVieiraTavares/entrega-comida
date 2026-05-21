@@ -1,8 +1,9 @@
 package com.ms.orderservice.messaging.producer.order_product;
 
-import com.ms.shared.dtos.stock.StockItemDto;
-import com.ms.shared.dtos.stock.StockUpdateMessage;
-import com.ms.shared.dtos.stock.StockValidationRequestDto;
+
+import com.example.sharedfilesmodule.dtos.StockItemDto;
+import com.example.sharedfilesmodule.dtos.StockUpdateMessage;
+import com.example.sharedfilesmodule.dtos.StockValidationRequestDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
@@ -36,7 +37,7 @@ public class OrderMessagingProducer {
 
     public void sendStockUpdate(List<StockItemDto> items) {
         var message = new StockUpdateMessage(items);
-        var future = kafkaTemplate.send("order-update-stock", message);
+        var future = kafkaTemplate.send("order.update-stock", message);
 
         future.whenComplete((sendResult, ex) -> {
             if(ex != null){
