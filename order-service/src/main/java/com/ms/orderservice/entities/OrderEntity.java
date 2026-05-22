@@ -31,15 +31,19 @@ public class OrderEntity {
     @Column(name = "restaurant_id")
     private UUID restaurantId;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
     @Column(name = "total_price")
     private BigDecimal totalPrice;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "expires_at")
+    private LocalDateTime expiresAt;
+
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItemEntity> items = new ArrayList<>();

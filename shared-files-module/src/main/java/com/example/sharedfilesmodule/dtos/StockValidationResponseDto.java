@@ -1,6 +1,7 @@
 package com.example.sharedfilesmodule.dtos;
 
 
+import com.example.sharedfilesmodule.enums.StockValidationStatus;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.NotBlank;
 import java.math.BigDecimal;
@@ -11,7 +12,7 @@ public record StockValidationResponseDto(
         UUID orderId,
 
         @NotBlank(message = "status cannot be blank")
-        String status,
+        StockValidationStatus status,
 
         @NotNull(message = "totalPrice cannot be null")
         BigDecimal totalPrice
