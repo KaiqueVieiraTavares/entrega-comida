@@ -8,7 +8,7 @@ import com.ms.orderservice.entities.OrderEntity;
 import com.ms.orderservice.entities.OrderItemEntity;
 import com.ms.orderservice.exceptions.OrderNotFoundException;
 import com.ms.orderservice.exceptions.UnauthorizedAccessException;
-import com.ms.orderservice.messaging.producer.order_product.OrderMessagingProducer;
+import com.ms.orderservice.messaging.producer.product.ProductStockValidationProducer;
 import com.ms.orderservice.repositories.OrderRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ class OrderServiceTest {
     @Mock
     private OrderRepository orderRepository;
     @Mock
-    private OrderMessagingProducer orderMessagingProducer;
+    private ProductStockValidationProducer productStockValidationProducer;
     @InjectMocks
     private OrderService orderService;
     private final long itemId = 1L;
@@ -74,7 +74,7 @@ class OrderServiceTest {
         var response = orderService.createOrder(userId,orderRequestDto);
         assertNotNull(response.orderId());
         assertEquals("Request received, awaiting validation", response.message());
-        verify(orderMessagingProducer,times(1)).sendStockValidationRequest(any(StockValidationRequestDto.class));
+        verify(productStockValidationProducer,times(1)).sendStockValidationRequest(any(StockValidationRequestDto.class));
     }
 
     @Test
@@ -196,7 +196,7 @@ class OrderServiceTest {
         verify(orderRepository, times(1)).findById(any(UUID.class));
         verify(orderRepository,times(1)).save(orderEntity);
         verify(modelMapper,times(1)).map(orderEntity, OrderResponseDto.class);
-        verify(orderMessagingProducer,times(1)).sendStockUpdate(items);
+        verify(productStockValidationProducer,times(1)).sendStockUpdate(items);
 
     }
 
@@ -209,6 +209,6 @@ class OrderServiceTest {
         assertEquals("You do not have access to this content", exception.getMessage());
         verify(orderRepository,never()).save(any());
         verify(modelMapper,never()).map(any(),any());
-        verify(orderMessagingProducer,never()).sendStockUpdate(any());
+        verify(productStockValidationProducer,never()).sendStockUpdate(any());
     }
 }

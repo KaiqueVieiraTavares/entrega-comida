@@ -4,7 +4,7 @@ import com.example.sharedfilesmodule.dtos.StockItemDto;
 import com.example.sharedfilesmodule.dtos.StockUpdateMessage;
 import com.example.sharedfilesmodule.enums.OrderStatus;
 import com.ms.orderservice.entities.OrderEntity;
-import com.ms.orderservice.messaging.producer.order_product.OrderMessagingProducer;
+import com.ms.orderservice.messaging.producer.product.ProductRestockProducer;
 import com.ms.orderservice.repositories.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +20,11 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class OrderExpirationScheduler {
-    private final OrderMessagingProducer orderMessagingProducer;
+    private final ProductRestockProducer restockProducer;
     private final OrderRepository orderRepository;
+
+
+
     @Scheduled(fixedRate = 60000)
     @Transactional
     public void cancelExpiredOrders(){
@@ -35,7 +38,7 @@ public class OrderExpirationScheduler {
             if(itemDtos.isEmpty()){
                 continue;
             }
-            orderMessagingProducer.sendStockRestore(new StockUpdateMessage(itemDtos));
+            restockProducer.sendStockRestore(new StockUpdateMessage(itemDtos));
             order.setStatus(OrderStatus.CANCELED);
         }
     }

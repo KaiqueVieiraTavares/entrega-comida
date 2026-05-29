@@ -1,4 +1,4 @@
-package com.ms.deliveryservice.messaging.listener;
+package com.ms.deliveryservice.messaging.consumer;
 
 import com.example.sharedfilesmodule.dtos.OrderConfirmedDto;
 import com.ms.deliveryservice.services.DeliveryService;
@@ -6,10 +6,10 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DeliveryMessageListener {
+public class OrderConfirmedConsumer {
     private final DeliveryService deliveryService;
 
-    public DeliveryMessageListener(DeliveryService deliveryService) {
+    public OrderConfirmedConsumer(DeliveryService deliveryService) {
         this.deliveryService = deliveryService;
     }
 

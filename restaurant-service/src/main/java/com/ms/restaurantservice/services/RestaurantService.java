@@ -1,6 +1,8 @@
 package com.ms.restaurantservice.services;
 
 import com.example.sharedfilesmodule.dtos.restaurant.RestaurantCreatedEvent;
+import com.example.sharedfilesmodule.dtos.restaurant.RestaurantDeletedEvent;
+import com.example.sharedfilesmodule.dtos.restaurant.RestaurantUpdatedEvent;
 import com.ms.restaurantservice.dtos.restaurant.RestaurantCreateDto;
 import com.ms.restaurantservice.dtos.restaurant.RestaurantOwnerChangedDto;
 import com.ms.restaurantservice.dtos.restaurant.RestaurantResponseDto;
@@ -12,6 +14,7 @@ import com.ms.restaurantservice.exceptions.restaurant.UnauthorizedAccessExceptio
 import com.ms.restaurantservice.messaging.RestaurantEventPublisher;
 import com.ms.restaurantservice.repositories.RestaurantRepository;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -44,6 +47,7 @@ public class RestaurantService {
         var restaurant = restaurantRepository.findById(restaurantId).orElseThrow(RestaurantNotFoundException::new);
         validatePermission(restaurant, ownerId);
         restaurantRepository.delete(restaurant);
+        restaurantEventPublisher.publishRestaurantDeleted(new RestaurantDeletedEvent(restaurantId));
     }
     public RestaurantResponseDto getRestaurantById(UUID restaurantId){
         var restaurant = restaurantRepository.findById(restaurantId)
@@ -70,19 +74,17 @@ public class RestaurantService {
         var updatedRestaurant = restaurantRepository.save(restaurant);
         return modelMapper.map(updatedRestaurant, RestaurantResponseDto.class);
     }
-    public String getRestaurantAddress(UUID restaurantId){
-        return restaurantRepository.findById(restaurantId).map(RestaurantEntity::getAddress).
-                orElseThrow(RestaurantNotFoundException::new);
-    }
-    public UUID getRestaurantByOwnerId(UUID ownerId){
-        return restaurantRepository.findByOwnerId(ownerId).orElseThrow(RestaurantNotFoundException::new);
-    }
+
     @Transactional
     public RestaurantResponseDto transferOwnerShip(RestaurantOwnerChangedDto restaurantOwnerChangedEvent, UUID ownerId){
+        if(restaurantOwnerChangedEvent.newOwnerId().equals(ownerId)){
+            throw new BadRequestException();
+        }
         var restaurant = restaurantRepository.findById(restaurantOwnerChangedEvent.restaurantId()).orElseThrow(RestaurantNotFoundException::new);
         validatePermission(restaurant, ownerId);
         restaurant.setOwnerId(restaurantOwnerChangedEvent.newOwnerId());
         var savedRestaurant = restaurantRepository.save(restaurant);
+        restaurantEventPublisher.publishRestaurantOwnerShipUpdated(new RestaurantUpdatedEvent(savedRestaurant.getOwnerId(), savedRestaurant.getId()));
         return modelMapper.map(savedRestaurant, RestaurantResponseDto.class);
     }
     private void validatePermission(RestaurantEntity restaurantEntity, UUID ownerId){
