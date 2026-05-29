@@ -14,4 +14,5 @@ public interface RestaurantRepository extends JpaRepository<RestaurantEntity, UU
     Boolean existsByName(String name);
     @Query("SELECT r.id from RestaurantEntity r where r.ownerId = :ownerId")
     Optional<UUID> findByOwnerId(UUID ownerId);
+    Boolean existsByIdAndOwnerId(UUID restaurantId, UUID ownerId);
 }

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class MessageConsumer {
+public class OrderStockConsumer {
     private final ProductRepository productRepository;
     private final ProductStockService productStockService;
     @KafkaListener(topics = "order.validate-stock", groupId = "product-service")

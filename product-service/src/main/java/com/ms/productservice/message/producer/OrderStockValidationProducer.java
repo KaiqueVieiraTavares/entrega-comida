@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class ProductProducer {
+public class OrderStockValidationProducer {
     private final KafkaTemplate<String, StockValidationResponseDto> kafkaTemplate;
     private static final String VALIDATION_RESULT = "order.stock-validation-result";
     public void sendValidationResult(StockValidationResponseDto stockValidationResponseDto){

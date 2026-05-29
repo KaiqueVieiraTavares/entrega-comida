@@ -3,16 +3,15 @@ package com.ms.deliveryservice.services;
 
 import com.example.sharedfilesmodule.dtos.OrderConfirmedDto;
 import com.example.sharedfilesmodule.enums.DeliveryStatus;
-
 import com.ms.deliveryservice.dtos.DeliveryResponseDTO;
-
 import com.ms.deliveryservice.entities.DeliveryEntity;
-import com.ms.deliveryservice.exceptions.DeliveryAlreadyCompletedException;
-
-
+import com.ms.deliveryservice.exceptions.DeliveryBusinessException;
 import com.ms.deliveryservice.exceptions.DeliveryNotFoundException;
-import com.ms.deliveryservice.messaging.producer.delivery_notification.NotificationMessagingProducer;
+import com.ms.deliveryservice.messaging.producer.delivery.DeliveryArrivedProducer;
+import com.ms.deliveryservice.messaging.producer.delivery.DeliveryCancelledProducer;
+import com.ms.deliveryservice.messaging.producer.delivery.DeliveryOnRouteProducer;
 import com.ms.deliveryservice.repositories.DeliveryRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -23,15 +22,13 @@ import java.util.UUID;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class DeliveryService {
     private final DeliveryRepository deliveryRepository;
     private final ModelMapper modelMapper;
-    private final NotificationMessagingProducer notificationMessagingProducer;
-    public DeliveryService(DeliveryRepository deliveryRepository, ModelMapper modelMapper, NotificationMessagingProducer notificationMessagingProducer) {
-        this.deliveryRepository = deliveryRepository;
-        this.modelMapper = modelMapper;
-        this.notificationMessagingProducer = notificationMessagingProducer;
-    }
+    private final DeliveryOnRouteProducer deliveryOnRouteProducer;
+    private final DeliveryArrivedProducer deliveryArrivedProducer;
+    private final DeliveryCancelledProducer deliveryCancelledProducer;
 
     //internal
     @Transactional
@@ -56,11 +53,14 @@ public class DeliveryService {
             throw new IllegalArgumentException("Id's cannot be null");
         }
         var delivery = deliveryRepository.findById(deliveryId).orElseThrow(() ->
-                        new DeliveryNotFoundException("Delivery with id: %s and delivery man with id: %s not found".formatted(deliveryId, deliveryPersonId)));
+                        new DeliveryNotFoundException("Delivery with id: %s not found".formatted(deliveryId)));
+        if(delivery.getStatus()!=DeliveryStatus.WAITING_ASSIGNMENT){
+            throw new DeliveryBusinessException("Delivery with id: %s is not available to assign".formatted(delivery.getId()));
+        }
         delivery.setDeliveryPersonId(deliveryPersonId);
         delivery.setStatus(DeliveryStatus.ASSIGNED);
         log.info("Delivery with id: {} changed status to assigned", deliveryId);
-        notificationMessagingProducer.sendMessageWhenOrderIsOnRoute(delivery.getUserId());
+        deliveryOnRouteProducer.sendMessageWhenOrderIsOnRoute(delivery.getUserId());
         return modelMapper.map(deliveryRepository.save(delivery), DeliveryResponseDTO.class);
     }
     @Transactional
@@ -71,7 +71,7 @@ public class DeliveryService {
         delivery.setStatus(DeliveryStatus.ARRIVED);
         log.info("Delivery with id: {} changed status to arrived", deliveryId);
         var savedDelivery = deliveryRepository.save(delivery);
-        notificationMessagingProducer.sendMessageToUserWhenOrderArrived(savedDelivery.getUserId());
+        deliveryArrivedProducer.sendMessageToUserWhenOrderArrived(savedDelivery.getUserId());
         return modelMapper.map(savedDelivery, DeliveryResponseDTO.class);
     }
 
@@ -79,13 +79,13 @@ public class DeliveryService {
     public void cancelDelivery(UUID deliveryPersonId, UUID deliveryId){
         var delivery = deliveryRepository.findByDeliveryPersonIdAndId(deliveryPersonId, deliveryId).orElseThrow(() ->
                 new DeliveryNotFoundException("Delivery with id: %s not found".formatted(deliveryId)));
-        if(delivery.getStatus() == DeliveryStatus.DELIVERED){
-            throw new DeliveryAlreadyCompletedException("Cannot cancel a delivered delivery");
+        if(delivery.getStatus() == DeliveryStatus.DELIVERED || delivery.getStatus() == DeliveryStatus.WAITING_ASSIGNMENT || delivery.getStatus() == DeliveryStatus.FAILED){
+            throw new DeliveryBusinessException("Cannot cancel delivery in its current status: %s".formatted(delivery.getStatus()));
         }
 
         delivery.setStatus(DeliveryStatus.FAILED);
         log.info("Delivery with id: {} changed status to failed", deliveryId);
         deliveryRepository.save(delivery);
-        notificationMessagingProducer.sendMessageToUserWhenOrderIsCanceled(delivery.getUserId());
+        deliveryCancelledProducer.sendMessageToUserWhenOrderIsCanceled(delivery.getUserId());
     }
 }

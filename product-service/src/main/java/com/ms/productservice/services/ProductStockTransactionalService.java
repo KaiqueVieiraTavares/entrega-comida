@@ -2,7 +2,6 @@ package com.ms.productservice.services;
 
 import com.example.sharedfilesmodule.dtos.StockValidationRequestDto;
 import com.ms.productservice.exceptions.InsufficientStockException;
-import com.ms.productservice.exceptions.ProductNotFoundException;
 import com.ms.productservice.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,10 +14,9 @@ public class ProductStockTransactionalService {
     @Transactional
     public void executeStockValidation(StockValidationRequestDto stockValidationRequestDto){
         for(var item : stockValidationRequestDto.items()) {
-            var product = productRepository.findById(item.productId()).orElseThrow(ProductNotFoundException::new);
-            int updatedRows = productRepository.decreaseStock(product.getId(), item.quantity());
+            int updatedRows = productRepository.decreaseStock(item.productId(), item.quantity());
             if(updatedRows == 0){
-                throw new InsufficientStockException("Insufficient stock for product: " + product.getId());
+                throw new InsufficientStockException("Insufficient stock or product not found for product: " + item.productId());
             }
         }
     }

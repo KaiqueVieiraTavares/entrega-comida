@@ -1,8 +1,9 @@
-package com.ms.orderservice.messaging.producer.order_delivery;
+package com.ms.orderservice.messaging.producer.order;
 
 import com.example.sharedfilesmodule.dtos.OrderConfirmedDto;
 import com.ms.orderservice.feignclient.RestaurantServiceClient;
 import com.ms.orderservice.feignclient.UserServiceClient;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
@@ -11,18 +12,11 @@ import java.util.UUID;
 
 @Slf4j
 @Component
-public class DeliveryMessagingProducer {
+@RequiredArgsConstructor
+public class OrderConfirmedProducer {
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final RestaurantServiceClient restaurantServiceClient;
     private final UserServiceClient userServiceClient;
-
-    public DeliveryMessagingProducer(KafkaTemplate<String, Object> kafkaTemplate,
-                                     RestaurantServiceClient restaurantServiceClient,
-                                     UserServiceClient userServiceClient) {
-        this.kafkaTemplate = kafkaTemplate;
-        this.restaurantServiceClient = restaurantServiceClient;
-        this.userServiceClient = userServiceClient;
-    }
 
     public void sendOrderConfirmed(UUID userId, UUID orderId, UUID restaurantId){
         String userAddress = userServiceClient.getAddress(userId);

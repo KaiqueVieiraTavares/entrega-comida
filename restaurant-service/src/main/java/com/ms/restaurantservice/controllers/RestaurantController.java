@@ -53,14 +53,7 @@ public class RestaurantController {
         restaurantService.deleteRestaurant(ownerId, restaurantId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
-    @GetMapping("/{restaurantId}/address")
-    public ResponseEntity<String> getAddress(@PathVariable UUID restaurantId){
-        return ResponseEntity.ok(restaurantService.getRestaurantAddress(restaurantId));
-    }
-    @GetMapping("/me/id")
-    public ResponseEntity<UUID> getMyRestaurantId(@RequestHeader("X-User-Id") UUID ownerId){
-        return ResponseEntity.ok(restaurantService.getRestaurantByOwnerId(ownerId));
-    }
+
     @PostMapping("/transfer")
     public ResponseEntity<RestaurantResponseDto> transferOwnerShip(@Valid @RequestBody RestaurantOwnerChangedDto restaurantOwnerChangedEvent, @RequestHeader("X-User-Id") UUID ownerId){
         return ResponseEntity.ok(restaurantService.transferOwnerShip(restaurantOwnerChangedEvent,ownerId));

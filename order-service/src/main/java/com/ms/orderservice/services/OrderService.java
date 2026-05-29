@@ -8,12 +8,11 @@ import com.ms.orderservice.dtos.OrderRequestDto;
 import com.ms.orderservice.dtos.OrderResponseDto;
 import com.ms.orderservice.entities.OrderEntity;
 import com.ms.orderservice.entities.OrderItemEntity;
-import com.ms.orderservice.exceptions.BusinessException;
 import com.ms.orderservice.exceptions.KafkaSendException;
 import com.ms.orderservice.exceptions.OrderNotFoundException;
 import com.ms.orderservice.exceptions.UnauthorizedAccessException;
-import com.ms.orderservice.messaging.producer.order_delivery.DeliveryMessagingProducer;
-import com.ms.orderservice.messaging.producer.order_product.OrderMessagingProducer;
+import com.ms.orderservice.messaging.producer.order.OrderConfirmedProducer;
+import com.ms.orderservice.messaging.producer.product.ProductStockValidationProducer;
 import com.ms.orderservice.repositories.OrderRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -27,17 +26,17 @@ import java.util.UUID;
 @Slf4j
 @Service
 public class OrderService {
-    private final OrderMessagingProducer orderMessagingProducer;
+    private final ProductStockValidationProducer productStockValidationProducer;
     private final OrderRepository orderRepository;
     private final ModelMapper modelMapper;
-    private final DeliveryMessagingProducer deliveryMessagingProducer;
+    private final OrderConfirmedProducer orderConfirmedProducer;
 
-    public OrderService(OrderMessagingProducer orderMessagingProducer, OrderRepository orderRepository, ModelMapper modelMapper, DeliveryMessagingProducer deliveryMessagingProducer) {
-        this.orderMessagingProducer = orderMessagingProducer;
+    public OrderService(ProductStockValidationProducer productStockValidationProducer, OrderRepository orderRepository, ModelMapper modelMapper, OrderConfirmedProducer orderConfirmedProducer) {
+        this.productStockValidationProducer = productStockValidationProducer;
         this.orderRepository = orderRepository;
         this.modelMapper = modelMapper;
 
-        this.deliveryMessagingProducer = deliveryMessagingProducer;
+        this.orderConfirmedProducer = orderConfirmedProducer;
     }
     @Transactional
     public CreateOrderResponseDto createOrder(UUID userId, OrderRequestDto orderRequestDto){
@@ -53,7 +52,7 @@ public class OrderService {
                     .toList();
             StockValidationRequestDto validation = new StockValidationRequestDto(orderId, userId, items);
 
-            orderMessagingProducer.sendStockValidationRequest(validation);
+            productStockValidationProducer.sendStockValidationRequest(validation);
 
             return new CreateOrderResponseDto(orderId, "Request received, awaiting validation");
         }catch(Exception e){
@@ -112,42 +111,17 @@ public class OrderService {
         if (!(order.getUserId().equals(userId))) {
             throw new UnauthorizedAccessException();
         }
-        try {
-            orderMessagingProducer.sendStockUpdate(order.getItems().stream().map(
-                    itemEntity -> new StockItemDto(itemEntity.getProductId(),
-                            itemEntity.getQuantity())
-            ).toList());
-            order.setStatus(OrderStatus.PAID);
-            var savedOrder = orderRepository.save(order);
-            try{
-                deliveryMessagingProducer.sendOrderConfirmed(savedOrder.getUserId(), savedOrder.getId(), savedOrder.getRestaurantId());
-            } catch (KafkaSendException e){
-                log.error("Error sending order confirmation to Kafka. OrderId: {}", savedOrder.getId(), e);
-            }
-            return modelMapper.map(savedOrder, OrderResponseDto.class);
-        } catch (KafkaSendException e){
-            order.setStatus(OrderStatus.PENDING_SYNC);
-            orderRepository.save(order);
-            throw new BusinessException("Order confirmed, but inventory synchronization is pending");
-        }
-    }
 
-    @Transactional
-    public OrderResponseDto retryOrderSync(UUID userId, UUID orderId){
-        var order = orderRepository.findById(orderId).orElseThrow(OrderNotFoundException::new);
-        if(!(order.getUserId().equals(userId))){
-            throw new UnauthorizedAccessException();
+        order.setStatus(OrderStatus.PAID);
+        var savedOrder = orderRepository.save(order);
+
+        try {
+            orderConfirmedProducer.sendOrderConfirmed(savedOrder.getUserId(), savedOrder.getId(), savedOrder.getRestaurantId());
+        } catch (KafkaSendException e) {
+            log.error("Error sending order confirmation to Kafka. OrderId: {}", savedOrder.getId(), e);
+
         }
-        if(order.getStatus()!=OrderStatus.PENDING_SYNC){
-            throw new BusinessException("Request is not pending synchronization");
-        }
-        try{
-            orderMessagingProducer.sendStockUpdate(order.getItems().stream().map(item ->
-                    new StockItemDto(item.getProductId(), item.getQuantity())).toList());
-            order.setStatus(OrderStatus.PAID);
-            return modelMapper.map(orderRepository.save(order), OrderResponseDto.class);
-        } catch (KafkaSendException e){
-            throw new BusinessException("sync failed, please try again later");
-        }
+
+        return modelMapper.map(savedOrder, OrderResponseDto.class);
     }
 }
