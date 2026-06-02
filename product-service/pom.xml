@@ -57,12 +57,10 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.ms</groupId>
-            <artifactId>shared-files</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <groupId>com.example</groupId>
+            <artifactId>shared-files-module</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
-
-
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>

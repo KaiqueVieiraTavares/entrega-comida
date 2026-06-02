@@ -180,7 +180,7 @@ class DeliveryServiceTest {
         verify(deliveryRepository,never()).save(any());
     }
     @Test
-    void assignDelivery_ShouldThrownAnExceptionWhenDeliveryNotFound(){
+    void assignDelivery_ShouldThrowAnExceptionWhenDeliveryNotFound(){
         when(deliveryRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
 
         assertThrows(DeliveryNotFoundException.class, () -> deliveryService.assignDelivery(deliveryPersonId, deliveryId));
@@ -199,14 +199,15 @@ class DeliveryServiceTest {
     }
 
     @Test
-    void cancelDelivery_shouldThrownAnExceptionWhenDeliveryNotFound(){
+    void cancelDelivery_shouldThrowAnExceptionWhenDeliveryNotFound(){
         when(deliveryRepository.findByDeliveryPersonIdAndId(any(UUID.class), any(UUID.class))).thenReturn(Optional.empty());
 
         assertThrows(DeliveryNotFoundException.class, () -> deliveryService.cancelDelivery(deliveryPersonId, deliveryId));
         verify(deliveryRepository,never()).save(any());
+        verify(deliveryCancelledProducer,never()).sendMessageToUserWhenOrderIsCanceled(any());
     }
     @Test
-    void cancelDelivery_shouldThrownAnDeliveryAlreadyCompletedException(){
+    void cancelDelivery_shouldThrowAnDeliveryAlreadyCompletedException(){
         deliveryEntity.setStatus(DeliveryStatus.DELIVERED);
         when(deliveryRepository.findByDeliveryPersonIdAndId(any(UUID.class), any(UUID.class))).thenReturn(Optional.of(deliveryEntity));
         assertThrows(DeliveryBusinessException.class, () -> deliveryService.cancelDelivery(deliveryPersonId, deliveryId));

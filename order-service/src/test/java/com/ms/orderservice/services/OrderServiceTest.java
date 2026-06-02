@@ -1,6 +1,5 @@
 package com.ms.orderservice.services;
 
-import com.example.sharedfilesmodule.dtos.StockItemDto;
 import com.example.sharedfilesmodule.dtos.StockValidationRequestDto;
 import com.example.sharedfilesmodule.enums.OrderStatus;
 import com.ms.orderservice.dtos.*;
@@ -8,6 +7,7 @@ import com.ms.orderservice.entities.OrderEntity;
 import com.ms.orderservice.entities.OrderItemEntity;
 import com.ms.orderservice.exceptions.OrderNotFoundException;
 import com.ms.orderservice.exceptions.UnauthorizedAccessException;
+import com.ms.orderservice.messaging.producer.order.OrderConfirmedProducer;
 import com.ms.orderservice.messaging.producer.product.ProductStockValidationProducer;
 import com.ms.orderservice.repositories.OrderRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,6 +35,8 @@ class OrderServiceTest {
     @Mock
     private OrderRepository orderRepository;
     @Mock
+    private OrderConfirmedProducer orderConfirmedProducer;
+    @Mock
     private ProductStockValidationProducer productStockValidationProducer;
     @InjectMocks
     private OrderService orderService;
@@ -48,6 +50,7 @@ class OrderServiceTest {
     private final BigDecimal price = BigDecimal.valueOf(50.00);
     private final BigDecimal totalPrice = price.multiply(BigDecimal.valueOf(quantity));
     private final LocalDateTime createdAt = LocalDateTime.now();
+    private final LocalDateTime expiredAt = LocalDateTime.now().plusMinutes(15);
     private final OrderStatus status = OrderStatus.PENDING_PAYMENT;
     private CreateOrderResponseDto createOrderResponseDto;
     private OrderItemRequestDto orderItemRequestDto;
@@ -65,7 +68,8 @@ class OrderServiceTest {
         orderResponseDto = new OrderResponseDto(orderId, status, totalPrice, List.of(orderItemResponseDto));
         createOrderResponseDto = new CreateOrderResponseDto(orderId, "Pedido criado com sucesso!");
         orderItemEntity = new OrderItemEntity(itemId,productId,productName,quantity,price,orderEntity);
-        orderEntity = new OrderEntity(orderId,userId,restaurantId,createdAt,status,totalPrice,new ArrayList<>(List.of(orderItemEntity)));
+        orderEntity = new OrderEntity(orderId,userId,restaurantId,status,totalPrice, createdAt, expiredAt, new ArrayList<>(List.of(orderItemEntity)));
+        orderItemEntity.setOrder(orderEntity);
         emptyOrderRequestDto = new OrderRequestDto(List.of());
     }
 
@@ -89,7 +93,7 @@ class OrderServiceTest {
         verify(modelMapper,times(1)).map(orderEntity, OrderResponseDto.class);
     }
     @Test
-    void getOrder_ShouldThrownAnExceptionWhenOrderNotFound(){
+    void getOrder_ShouldThrowAnExceptionWhenOrderNotFound(){
         when(orderRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
 
         var exception = assertThrows(OrderNotFoundException.class, () -> orderService.getOrder(userId, orderId));
@@ -99,7 +103,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void getOrder_ShouldThrownAnExceptionWhenUserIsNotAuthorized(){
+    void getOrder_ShouldThrowAnExceptionWhenUserIsNotAuthorized(){
         UUID otherId = UUID.randomUUID();
         when(orderRepository.findById(orderId)).thenReturn(Optional.of(orderEntity));
 
@@ -128,7 +132,7 @@ class OrderServiceTest {
         verify(orderRepository,times(1)).delete(orderEntity);
     }
     @Test
-    void deleteOrder_ShouldThrownAnExceptionWhenOrderNotFound(){
+    void deleteOrder_ShouldThrowAnExceptionWhenOrderNotFound(){
         when(orderRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
 
         var exception = assertThrows(OrderNotFoundException.class, () -> orderService.deleteOrder(userId, orderId));
@@ -138,7 +142,7 @@ class OrderServiceTest {
 
     }
     @Test
-    void deleteOrder_ShouldThrownAnExceptionWhenUserIsNotAuthorized(){
+    void deleteOrder_ShouldThrowAnExceptionWhenUserIsNotAuthorized(){
         UUID invalidId= UUID.randomUUID();
         when(orderRepository.findById(any(UUID.class))).thenReturn(Optional.of(orderEntity));
 
@@ -161,7 +165,7 @@ class OrderServiceTest {
         verify(modelMapper,times(1)).map(orderEntity, OrderResponseDto.class);
     }
     @Test
-    void updateOrder_ShouldThrownAnExceptionWhenUserIsNotAuthorized(){
+    void updateOrder_ShouldThrowAnExceptionWhenUserIsNotAuthorized(){
         UUID invalidUUId = UUID.randomUUID();
         when(orderRepository.findById(any(UUID.class))).thenReturn(Optional.of(orderEntity));
 
@@ -173,7 +177,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void updateOrder_ShouldThrownAnExceptionWhenRequestIsEmpty(){
+    void updateOrder_ShouldThrowAnExceptionWhenRequestIsEmpty(){
         when(orderRepository.findById(any(UUID.class))).thenReturn(Optional.of(orderEntity));
 
         var exception = assertThrows(IllegalArgumentException.class, () -> orderService.updateOrder(userId, orderId, emptyOrderRequestDto));
@@ -184,8 +188,7 @@ class OrderServiceTest {
 
     @Test
     void confirmOrder() {
-        List<StockItemDto> items = List.of(new StockItemDto(productId, quantity));
-        when(orderRepository.findById(any(UUID.class))).thenReturn(Optional.of(orderEntity));
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(orderEntity));
         when(orderRepository.save(orderEntity)).thenReturn(orderEntity);
         when(modelMapper.map(orderEntity,OrderResponseDto.class)).thenReturn(orderResponseDto);
 
@@ -193,22 +196,21 @@ class OrderServiceTest {
 
         assertEquals(orderResponseDto, response);
         assertEquals(OrderStatus.PAID, orderEntity.getStatus());
-        verify(orderRepository, times(1)).findById(any(UUID.class));
+        verify(orderRepository, times(1)).findById(orderId);
         verify(orderRepository,times(1)).save(orderEntity);
         verify(modelMapper,times(1)).map(orderEntity, OrderResponseDto.class);
-        verify(productStockValidationProducer,times(1)).sendStockUpdate(items);
-
+        verify(orderConfirmedProducer, times(1)).sendOrderConfirmed(any(), any(), any());
     }
 
     @Test
-    void confirmOrder_ShouldThrownAnExceptionWhenUserIsNotAuthorized(){
+    void confirmOrder_ShouldThrowAnExceptionWhenUserIsNotAuthorized(){
         UUID invalidUUId = UUID.randomUUID();
-        when(orderRepository.findById(any(UUID.class))).thenReturn(Optional.of(orderEntity));
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(orderEntity));
 
         var exception = assertThrows(UnauthorizedAccessException.class,() -> orderService.confirmOrder(invalidUUId, orderId));
         assertEquals("You do not have access to this content", exception.getMessage());
         verify(orderRepository,never()).save(any());
         verify(modelMapper,never()).map(any(),any());
-        verify(productStockValidationProducer,never()).sendStockUpdate(any());
+        verifyNoMoreInteractions(orderConfirmedProducer);
     }
 }

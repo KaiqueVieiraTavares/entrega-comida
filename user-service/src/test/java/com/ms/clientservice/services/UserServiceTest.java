@@ -2,6 +2,7 @@ package com.ms.clientservice.services;
 
 import com.example.sharedfilesmodule.dtos.user.UserRegisterDto;
 import com.example.sharedfilesmodule.dtos.user.UserResponseDto;
+import com.example.sharedfilesmodule.enums.Role;
 import com.ms.clientservice.dtos.ResponseDto;
 import com.ms.clientservice.dtos.UpdateDto;
 import com.ms.clientservice.entities.UserEntity;
@@ -22,7 +23,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 
