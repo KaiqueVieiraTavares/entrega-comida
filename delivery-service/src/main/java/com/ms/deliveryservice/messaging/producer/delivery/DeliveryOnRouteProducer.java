@@ -16,7 +16,7 @@ public class DeliveryOnRouteProducer {
     private static final String ORDER_ON_ROUTE_TOPIC = "order-on-route-notification";
 
     public void sendMessageWhenOrderIsOnRoute(UUID userId){
-        OrderNotificationDto orderNotificationDto = new OrderNotificationDto(userId, "You order is on route");
+        OrderNotificationDto orderNotificationDto = new OrderNotificationDto(userId, "Your order is on route");
         kafkaEventDispacher.sendMessage(ORDER_ON_ROUTE_TOPIC, userId.toString(), orderNotificationDto);
     }
 }

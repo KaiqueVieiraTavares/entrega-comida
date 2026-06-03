@@ -14,7 +14,7 @@ public class DeliveryArrivedProducer {
     private static final String ORDER_ARRIVED_TOPIC = "order-arrived-notification";
     private final KafkaEventDispacher kafkaEventDispacher;
     public void sendMessageToUserWhenOrderArrived(UUID userId){
-        OrderNotificationDto orderNotificationDto = new OrderNotificationDto(userId, "You order has arrived");
+        OrderNotificationDto orderNotificationDto = new OrderNotificationDto(userId, "Your order has arrived");
         kafkaEventDispacher.sendMessage(ORDER_ARRIVED_TOPIC, userId.toString(), orderNotificationDto);
     }
 }
