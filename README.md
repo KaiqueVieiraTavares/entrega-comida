@@ -20,7 +20,6 @@ Um sistema de entrega de comida desenvolvido com **arquitetura de microsserviço
   - API Gateway
   - Config Server
 - **Mensageria**
-  - RabbitMQ
   - Kafka
 - **Comunicação em tempo real**
   - WebSocket
@@ -60,6 +59,6 @@ O sistema segue uma arquitetura de microsserviços, composta por:
 
 1. O usuário se autentica no **Auth-Service**.  
 2. Os pedidos são criados no **Order-Service**, que consulta o **Product-Service**.  
-3. As mensagens entre os serviços são trocadas via **RabbitMQ** ou **Kafka**.  
+3. As mensagens entre os serviços são trocadas via **Kafka**.  
 4. O acompanhamento do pedido em tempo real é feito por **WebSocket**.  
 5. O **Delivery-Service** organiza a entrega.  
