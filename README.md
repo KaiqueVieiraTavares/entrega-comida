@@ -18,7 +18,6 @@ Um sistema de entrega de comida desenvolvido com **arquitetura de microsserviço
 - **Spring Cloud**
   - Eureka (Service Discovery)
   - API Gateway
-  - Config Server
 - **Mensageria**
   - Kafka
 - **Comunicação em tempo real**
@@ -26,7 +25,7 @@ Um sistema de entrega de comida desenvolvido com **arquitetura de microsserviço
 - **Banco de Dados**
   - Mysql
 - **JUnit & Mockito** → Testes unitários 
-- **Docker** (futuramente)
+- **Docker** 
 ---
 
 ## Arquitetura
