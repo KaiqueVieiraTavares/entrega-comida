@@ -31,10 +31,6 @@ Um sistema de entrega de comida desenvolvido com **arquitetura de microsserviço
 ## Arquitetura
 
 ```mermaid
----
-config:
-  layout: elk
----
 flowchart TD
     %% Atores
     Cliente([Usuário / Cliente])
