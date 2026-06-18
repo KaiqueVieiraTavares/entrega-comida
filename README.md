@@ -12,9 +12,9 @@ Um sistema de entrega de comida desenvolvido com **arquitetura de microsserviço
   - Spring Security
   - validation
   - lombok
-  - sping data jpa 
+  - sping data JPA 
   - JWT
-  - OAuth2
+  - OAuth2 Client
 - **Spring Cloud**
   - Eureka (Service Discovery)
   - API Gateway
@@ -30,6 +30,86 @@ Um sistema de entrega de comida desenvolvido com **arquitetura de microsserviço
 
 ## Arquitetura
 
+```mermaid
+---
+config:
+  layout: elk
+---
+flowchart TD
+    %% Atores
+    Cliente([Usuário / Cliente])
+    Motoboy([Motoboy / Entregador])
+    Google([OAuth2 Google])
+
+    %% Gateway e Infraestrutura Central
+    Gateway[API Gateway-Service<br/>Filtro JWT e Roteamento]
+    Eureka[(Eureka-Server<br/>Service Discovery)]
+    Kafka{{Kafka<br/>Mensageria Event-Driven}}
+    DB[(Bancos de Dados<br/>MySQL Separados)]
+
+    %% Agrupamento de Microsserviços
+    subgraph Microsserviços [Arquitetura de Microsserviços Internos]
+        direction TB
+        Auth[Auth-Service]
+        User[User-Service]
+        Rest[Restaurant-Service]
+        Prod[Product-Service]
+        Order[Order-Service]
+        Delivery[Delivery-Service]
+        Notif[Notification-Service]
+    end
+
+    %% Fluxo de Entrada e Autenticação
+    Cliente -->|Requests REST / Login| Gateway
+    Motoboy -->|Requests REST| Gateway
+    
+    Gateway -->|Roteia p/ Autenticar| Auth
+    Auth <-->|Integração| Google
+    
+    %% Fluxo Principal (Roteamento do Gateway)
+    Gateway -->|Roteia requisições validadas| Order
+    Gateway -->|Roteia requisições validadas| User
+    Gateway -->|Roteia requisições validadas| Rest
+    Gateway -->|Roteia requisições validadas| Delivery
+
+    %% Comunicação Assíncrona (Kafka)
+    Order -.->|Publica: Chamada Assíncrona / Pedido Criado| Kafka
+    Prod -.->|Consome: Chamada / Publica: Resposta| Kafka
+    Rest -.->|Publica: Eventos do Restaurante| Kafka
+    Delivery -.->|Consome: Pedido / Publica: Status| Kafka
+    Notif -.->|Consome: Eventos do Sistema| Kafka
+
+    %% Comunicação em Tempo Real (WebSocket)
+    Notif -.->|WebSocket: Envia Notificações| Gateway
+    Gateway -.->|WebSocket: Push em Tempo Real| Cliente
+    Gateway -.->|WebSocket: Push em Tempo Real| Motoboy
+
+    %% Persistência
+    User & Rest & Prod & Order & Delivery --> DB
+
+    %% Service Discovery
+    Auth -.->|Registra| Eureka
+    User -.->|Registra| Eureka
+    Order -.->|Descobre/Registra| Eureka
+    Delivery -.->|Registra| Eureka
+    Notif -.->|Registra| Eureka
+    Prod -.->|Registra| Eureka
+    Rest -.->|Registra| Eureka
+    Gateway -.->|Descobre rotas| Eureka
+
+    %% Estilização de Cores
+    classDef actor fill:#e1f5fe,stroke:#0288d1,stroke-width:2px,color:#000
+    classDef gateway fill:#ffe082,stroke:#ff8f00,stroke-width:2px,color:#000
+    classDef service fill:#c8e6c9,stroke:#388e3c,stroke-width:2px,color:#000
+    classDef infra fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#000
+    classDef db fill:#cfd8dc,stroke:#455a64,stroke-width:2px,color:#000
+
+    class Cliente,Motoboy,Google actor
+    class Gateway gateway
+    class Auth,User,Rest,Prod,Order,Delivery,Notif service
+    class Eureka,Kafka infra
+    class DB db
+```
 O sistema segue uma arquitetura de microsserviços, composta por:
 
 - **Auth-Service** → Responsável por autenticação e autorização (JWT + OAuth2).
