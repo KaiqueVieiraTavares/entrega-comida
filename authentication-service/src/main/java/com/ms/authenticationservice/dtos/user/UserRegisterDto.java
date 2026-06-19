@@ -1,4 +1,4 @@
-package com.example.sharedfilesmodule.dtos.user;
+package com.ms.authenticationservice.dtos.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -23,5 +23,8 @@ public record UserRegisterDto(
 
         @NotBlank(message = "Phone is required")
         @Pattern(regexp = "\\d{11}", message = "Phone must have 11 digits")
-        String phone
+        String phone,
+
+        @NotBlank(message = "Address is required")
+        String address
 ) {}

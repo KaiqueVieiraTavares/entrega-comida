@@ -1,10 +1,10 @@
-package com.ms.authenticationservice.dtos.user;
+package com.ms.authenticationservice.dtos.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public record UserLoginDto(
+public record AuthLoginDto(
 
         @NotBlank(message = "Email is required")
         @Email(message = "Invalid email format")

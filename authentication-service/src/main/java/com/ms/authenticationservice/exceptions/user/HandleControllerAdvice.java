@@ -1,34 +1,37 @@
 package com.ms.authenticationservice.exceptions.user;
 
 
-import com.ms.authenticationservice.controllers.AuthUserController;
-import com.ms.authenticationservice.exceptions.deliveryPerson.VehiclePlateAlreadyExists;
+import com.ms.authenticationservice.controllers.auth.AuthController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.Optional;
+import java.time.Instant;
 
-@RestControllerAdvice(basePackageClasses = AuthUserController.class)
+@RestControllerAdvice(basePackageClasses = AuthController.class)
 public class HandleControllerAdvice {
 
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<ProblemDetail> handleBadCredentials(BadCredentialsException e){
-        var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-        problem.setTitle("Invalid credentials");
-        problem.setDetail("The username or password provided is incorrect.");
-        return ResponseEntity.of(Optional.of(problem));
+    public ProblemDetail handleBadCredentials(BadCredentialsException e){
+       return buildProblem("Bad credencials", e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(UserEmailAlreadyExistsException.class)
-    public ResponseEntity<ProblemDetail> handleEmailAlreadyExists(UserEmailAlreadyExistsException e){
-        var problem = ProblemDetail.forStatus(HttpStatus.CONFLICT);
-        problem.setDetail("Email already exists");
-        problem.setTitle(e.getMessage());
-        return ResponseEntity.of(Optional.of(problem));
+    public ProblemDetail handleEmailAlreadyExists(UserEmailAlreadyExistsException e){
+       return buildProblem("Email already exists", e.getMessage(), HttpStatus.CONFLICT);
+    }
+    @ExceptionHandler(UserNotFoundException.class)
+    public ProblemDetail handleUserNotFound(UserNotFoundException e){
+        return buildProblem("User not found", e.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    private ProblemDetail buildProblem(String title, String detail, HttpStatus httpStatus){
+        var problem = ProblemDetail.forStatusAndDetail(httpStatus, detail);
+        problem.setTitle(title);
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
     }
 }

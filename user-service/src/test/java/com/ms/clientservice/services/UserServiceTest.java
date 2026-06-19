@@ -71,7 +71,7 @@ class UserServiceTest {
         );
         expectedResponseDto = new ResponseDto(username,email,phone);
         expectedUpdatedtoDto = new UpdateDto(username,email);
-        expectedUserResponseDto = new UserResponseDto(UUID.randomUUID(), username,password,List.of("USER"));
+        expectedUserResponseDto = new UserResponseDto(UUID.randomUUID(), username,email, password,List.of(role));
     }
     @Test
     void registerUser_ShouldReturnUserResponse() {

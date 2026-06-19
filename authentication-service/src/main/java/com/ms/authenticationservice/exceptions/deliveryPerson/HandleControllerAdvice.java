@@ -1,28 +1,26 @@
 package com.ms.authenticationservice.exceptions.deliveryPerson;
 
-import com.example.deliverypersonservice.controllers.DeliveryPersonController;
+import com.ms.authenticationservice.controllers.delivery_person.DeliverypersonController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice(basePackageClasses = DeliveryPersonController.class)
+import java.time.Instant;
+
+@RestControllerAdvice(basePackageClasses = DeliverypersonController.class)
 public class HandleControllerAdvice {
 
+
     @ExceptionHandler(VehiclePlateAlreadyExists.class)
-    public ResponseEntity<ProblemDetail> handleVehiclePlateAlreadyExists(VehiclePlateAlreadyExists e){
-        var problem = ProblemDetail.forStatus(HttpStatus.CONFLICT);
-        problem.setTitle("Vehicle plate already exists");
-        problem.setDetail(e.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(problem);
+    public ProblemDetail handleVehiclePlateAlreadyExists(VehiclePlateAlreadyExists e){
+        return buildProblem("Vehicle plate already exists", e.getMessage(), HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(DeliveryPersonEmailAlreadyExistsException.class)
-    public ResponseEntity<ProblemDetail> handleEmailAlreadyExists(DeliveryPersonEmailAlreadyExistsException e){
-        var problem = ProblemDetail.forStatus(HttpStatus.CONFLICT);
-        problem.setTitle("Email already exists");
-        problem.setDetail(e.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(problem);
+    private ProblemDetail buildProblem(String title, String detail, HttpStatus httpStatus){
+        var problem = ProblemDetail.forStatusAndDetail(httpStatus, detail);
+        problem.setTitle(title);
+        problem.setProperty("timestamp", Instant.now());
+        return problem;
     }
 }
