@@ -1,4 +1,4 @@
-package com.example.sharedfilesmodule.dtos.deliveryperson;
+package com.ms.authenticationservice.dtos.delivery_person;
 
 
 import com.example.sharedfilesmodule.enums.VehicleType;

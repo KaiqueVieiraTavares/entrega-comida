@@ -1,13 +1,11 @@
 package com.ms.clientservice.entities;
 
-import com.example.sharedfilesmodule.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -29,36 +27,9 @@ public class UserEntity {
     @Column(name = "address")
     private String address;
 
-    @Column(name = "email")
-    private String email;
-
     @Column(name = "phone")
     private String phone;
 
     @Column(name = "cpf")
     private String cpf;
-
-    @Column(name = "password")
-    private String password;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role")
-    private Role role;
-
-    @Column(name = "created_at")
-    private Instant createdAt;
-
-    @Column(name = "updated_at")
-    private Instant updatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = Instant.now();
-        updatedAt = Instant.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = Instant.now();
-    }
 }

@@ -1,4 +1,4 @@
-package com.ms.authenticationservice.services;
+package com.ms.authenticationservice.services.auth;
 
 
 import com.example.sharedfilesmodule.enums.Role;
