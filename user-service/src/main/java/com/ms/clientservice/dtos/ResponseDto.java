@@ -1,4 +1,6 @@
 package com.ms.clientservice.dtos;
 
-public record ResponseDto(String name, String email,String phone) {
+import java.util.UUID;
+
+public record ResponseDto(UUID id, String name, String phone, String address) {
 }

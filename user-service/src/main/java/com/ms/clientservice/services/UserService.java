@@ -1,9 +1,7 @@
 package com.ms.clientservice.services;
 
 
-import com.example.sharedfilesmodule.dtos.user.UserRegisterDto;
-import com.example.sharedfilesmodule.dtos.user.UserResponseDto;
-import com.example.sharedfilesmodule.enums.Role;
+import com.example.sharedfilesmodule.dtos.user.UserCreatedEvent;
 import com.ms.clientservice.dtos.ResponseDto;
 import com.ms.clientservice.dtos.UpdateDto;
 import com.ms.clientservice.entities.UserEntity;
@@ -32,24 +30,14 @@ public class UserService {
 
 
     @Transactional
-    public UserResponseDto registerUser(UserRegisterDto dto) {
+    public ResponseDto registerUser(UserCreatedEvent dto) {
         var client = new UserEntity();
-        client.setUsername(dto.name());
-        client.setEmail(dto.email());
+        client.setUsername(dto.username());
         client.setCpf(dto.cpf());
         client.setPhone(dto.phone());
-        client.setPassword(passwordEncoder.encode(dto.password()));
-        client.setRole(Role.USER);
-
         var savedUser = userRepository.save(client);
-        return modelMapper.map(savedUser, UserResponseDto.class);
+        return modelMapper.map(savedUser, ResponseDto.class);
     }
-
-
-    public Boolean existsByEmail(String email){
-        return userRepository.existsByEmail(email);
-    }
-
 
     @Transactional
     public ResponseDto updateClient(UpdateDto updateDto, UUID id){
@@ -74,11 +62,6 @@ public class UserService {
                 .toList();
     }
 
-    public UserResponseDto findByEmail(String email){
-         var user = userRepository.findByEmail(email)
-                 .orElseThrow(() -> new UserNotFoundException("User not found"));
-         return modelMapper.map(user, UserResponseDto.class);
-    }
     public String getAddress(UUID id){
          var user  =userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"));
          return user.getAddress();
