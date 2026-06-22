@@ -1,13 +1,12 @@
 package com.ms.clientservice.services;
 
-import com.example.sharedfilesmodule.dtos.user.UserRegisterDto;
-import com.example.sharedfilesmodule.dtos.user.UserResponseDto;
-import com.example.sharedfilesmodule.enums.Role;
+import com.example.sharedfilesmodule.dtos.user.UserCreatedEvent;
 import com.ms.clientservice.dtos.ResponseDto;
 import com.ms.clientservice.dtos.UpdateDto;
 import com.ms.clientservice.entities.UserEntity;
 import com.ms.clientservice.exceptions.UserNotFoundException;
 import com.ms.clientservice.repositories.UserRepository;
+import com.ms.clientservice.services.templates.UserTemplateFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,16 +14,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 
@@ -36,57 +32,32 @@ class UserServiceTest {
     @Mock
     private ModelMapper modelMapper;
 
-    @Mock
-    private PasswordEncoder passwordEncoder;
-
     @InjectMocks
     private UserService userService;
-    private final String username = "Joao";
-    private final String address = "Rua Exemplo, 123";
-    private final String email = "joao@email.com";
-    private final String password = "123456";
-    private final String phone = "11999999999";
-    private final String cpf = "12345678900";
-    private final Role role = Role.USER;
 
-    private UserRegisterDto expectedRegisterDto;
+    private UserCreatedEvent expectedRegisterDto;
     private UserEntity expectedUserEntity;
-    private UserResponseDto expectedUserResponseDto;
     private UpdateDto expectedUpdatedtoDto;
     private ResponseDto expectedResponseDto;
     @BeforeEach
     public void setup() {
-        expectedRegisterDto = new UserRegisterDto(username, email,cpf, password, phone);
-        expectedUserEntity = new UserEntity(
-                UUID.randomUUID(),
-                username,
-                address,
-                email,
-                phone,
-                cpf,
-                password,
-                role,
-                Instant.now(),
-                Instant.now()
-        );
-        expectedResponseDto = new ResponseDto(username,email,phone);
-        expectedUpdatedtoDto = new UpdateDto(username,email);
-        expectedUserResponseDto = new UserResponseDto(UUID.randomUUID(), username,email, password,List.of(role));
+        expectedRegisterDto = UserTemplateFactory.createValidUserCreatedEvent();
+        expectedUserEntity = UserTemplateFactory.createValidUserEntity();
+        expectedResponseDto = UserTemplateFactory.createValidResponseDto();
+        expectedUpdatedtoDto = UserTemplateFactory.createValidUpdateDto();
     }
     @Test
     void registerUser_ShouldReturnUserResponse() {
-        // Arrange
-        when(passwordEncoder.encode(anyString())).thenReturn("encoded123");
+
         when(userRepository.save(any(UserEntity.class))).thenReturn(expectedUserEntity);
-        when(modelMapper.map(expectedUserEntity, UserResponseDto.class)).thenReturn(expectedUserResponseDto);
+        when(modelMapper.map(expectedUserEntity, ResponseDto.class)).thenReturn(expectedResponseDto);
 
-        // Act
-        UserResponseDto result = userService.registerUser(expectedRegisterDto);
 
-        // Assert
-        assertEquals(expectedUserResponseDto, result);
-        verify(passwordEncoder).encode(expectedRegisterDto.password());
-        verify(userRepository).save(any(UserEntity.class));
+        ResponseDto result = userService.registerUser(expectedRegisterDto);
+
+
+        assertEquals(expectedResponseDto, result);
+        verify(userRepository,times(1)).save(any(UserEntity.class));
     }
 
 
@@ -98,7 +69,8 @@ class UserServiceTest {
            UpdateDto source = invocationOnMock.getArgument(0);
            UserEntity destination = invocationOnMock.getArgument(1);
                destination.setUsername(source.name());
-       destination.setEmail(source.email());
+               destination.setPhone(source.phone());
+               destination.setAddress(source.address());
        return null;
        }).when(modelMapper).map(expectedUpdatedtoDto, expectedUserEntity);
        when(userRepository.save(any(UserEntity.class))).thenReturn(expectedUserEntity);
@@ -114,11 +86,8 @@ class UserServiceTest {
     @Test
     void updateUser_ShouldThrowAnUserNotFoundException(){
         when(userRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
-
-        var exception =  assertThrows(UserNotFoundException.class, () ->
+        assertThrows(UserNotFoundException.class, () ->
                 userService.updateClient(expectedUpdatedtoDto, UUID.randomUUID()));
-
-
         verify(userRepository, never()).save(any(UserEntity.class));
     }
     @Test
