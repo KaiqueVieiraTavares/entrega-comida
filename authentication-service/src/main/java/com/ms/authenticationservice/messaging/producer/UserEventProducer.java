@@ -1,4 +1,4 @@
-package com.ms.authenticationservice.messaging;
+package com.ms.authenticationservice.messaging.producer;
 
 import com.example.sharedfilesmodule.dtos.user.UserCreatedEvent;
 import lombok.RequiredArgsConstructor;
