@@ -1,6 +1,6 @@
 package com.example.deliverypersonservice.entities;
 
-import com.example.deliverypersonservice.enums.VehicleType;
+import com.example.sharedfilesmodule.enums.VehicleType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,6 +12,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
+@EqualsAndHashCode
 public class DeliveryPersonEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
