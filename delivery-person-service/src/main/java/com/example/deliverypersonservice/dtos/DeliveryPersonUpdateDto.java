@@ -1,6 +1,6 @@
 package com.example.deliverypersonservice.dtos;
 
-import com.example.deliverypersonservice.enums.VehicleType;
+import com.example.sharedfilesmodule.enums.VehicleType;
 
 public record DeliveryPersonUpdateDto(
         String name,

@@ -5,7 +5,7 @@ import com.example.deliverypersonservice.entities.DeliveryPersonEntity;
 import com.example.deliverypersonservice.exceptions.DeliveryPersonNotFound;
 import com.example.deliverypersonservice.repositories.DeliveryPersonRepository;
 import com.example.sharedfilesmodule.dtos.deliveryperson.DeliveryPersonCreatedEvent;
-import com.example.sharedfilesmodule.dtos.deliveryperson.DeliveryPersonResponseDto;
+import com.example.deliverypersonservice.dtos.DeliveryPersonResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;

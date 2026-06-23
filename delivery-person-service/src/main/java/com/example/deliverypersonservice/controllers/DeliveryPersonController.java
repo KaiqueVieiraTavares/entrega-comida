@@ -2,7 +2,7 @@ package com.example.deliverypersonservice.controllers;
 
 import com.example.deliverypersonservice.dtos.DeliveryPersonUpdateDto;
 import com.example.deliverypersonservice.services.DeliveryPersonService;
-import com.example.sharedfilesmodule.dtos.deliveryperson.DeliveryPersonResponseDto;
+import com.example.deliverypersonservice.dtos.DeliveryPersonResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
