@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: user-service
+
+  datasource:
+    url: ${USER_DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: user-service-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+
+        spring.json.trusted.packages: "com.example.sharedfilesmodule.*"
+
+server:
+  port: 8081
+
+logging:
+  level:
+    root: info
+
+api:
+  secret:
+    key: ${API_SECRET}
+    issuer: ${JWT_ISSUER}
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka

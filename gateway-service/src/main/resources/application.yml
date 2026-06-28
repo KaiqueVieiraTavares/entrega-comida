@@ -11,5 +11,11 @@ server:
   port: 8080
 
 api:
-  secret: "w4KjT0g5u1QhFvL6t0JYvX9H2y8PdM8Q5rV7s1x2z3A=
-"
+  secret: ${API_SECRET}
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka

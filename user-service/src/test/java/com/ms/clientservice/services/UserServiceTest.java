@@ -132,6 +132,7 @@ class UserServiceTest {
         );
 
         verify(modelMapper, never()).map(any(), any());
+        verifyNoInteractions(userRepository, modelMapper);
     }
 
     @Test
