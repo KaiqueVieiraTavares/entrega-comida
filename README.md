@@ -2,7 +2,7 @@
 
 Um sistema de entrega de comida desenvolvido com **arquitetura de microsserviços** utilizando **Spring Boot** e diversas tecnologias do ecossistema Cloud.  
 
----
+--
 
 ##  Tecnologias utilizadas
 
