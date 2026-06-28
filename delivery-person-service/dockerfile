@@ -1,0 +1,25 @@
+FROM maven:3.9-eclipse-temurin-21 AS build
+WORKDIR /app
+
+
+COPY ./shared-files-module /app/shared-files-module
+
+
+WORKDIR /app/shared-files-module
+RUN mvn clean install -DskipTests
+
+
+WORKDIR /app/delivery-person-service
+COPY ./delivery-person-service .
+
+
+RUN mvn clean package -DskipTests
+
+
+FROM eclipse-temurin:21-jre
+WORKDIR /app
+
+
+COPY --from=build /app/delivery-person-service/target/*.jar app.jar
+
+ENTRYPOINT ["java", "-jar", "app.jar"]
