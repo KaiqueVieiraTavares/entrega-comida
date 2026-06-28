@@ -14,7 +14,6 @@ Um sistema de entrega de comida desenvolvido com **arquitetura de microsserviço
   - lombok
   - sping data JPA 
   - JWT
-  - OAuth2 Client
 - **Spring Cloud**
   - Eureka (Service Discovery)
   - API Gateway
@@ -108,7 +107,7 @@ flowchart TD
 ```
 O sistema segue uma arquitetura de microsserviços, composta por:
 
-- **Auth-Service** → Responsável por autenticação e autorização (JWT + OAuth2).
+- **Auth-Service** → Responsável por autenticação e autorização (JWT).
 - **User-Service** → Gerenciamento de usuários.
 - **Product-Service** → Cadastro e atualização de produtos (API interna).
 - **Order-Service** → Criação e gerenciamento de pedidos.
@@ -125,7 +124,6 @@ O sistema segue uma arquitetura de microsserviços, composta por:
 ##  Autenticação
 
 - Login e registro via **JWT**.
-- Integração com **OAuth2 (Google)**.
 - Validação centralizada no **API Gateway**.
 
 ---
